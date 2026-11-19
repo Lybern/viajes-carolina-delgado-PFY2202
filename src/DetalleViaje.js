@@ -8,13 +8,13 @@ import { gql, useQuery } from '@apollo/client';
 // ---------------------------------------------------------------------------
 const GET_DETALLE_VIAJE = gql`
   query GetDetalleViaje($destino: String!) {
-    vuelos {
+    vuelos(destino: $destino) {
       aerolinea
       fechas
       precio
       disponibilidad
     }
-    hoteles {
+    hoteles(destino: $destino) {
       nombre
       fechas
       precio
