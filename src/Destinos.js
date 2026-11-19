@@ -35,7 +35,10 @@ function Destinos() {
           setError(err.message || 'No se pudo conectar con el servicio de destinos.');
         }
       } finally {
-        setCargando(false);
+        // Solo desactiva el estado de carga si la petición no fue abortada
+        if (!controller.signal.aborted) {
+          setCargando(false);
+        }
       }
     }
 
