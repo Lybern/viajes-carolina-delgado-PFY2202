@@ -10,8 +10,10 @@ import './App.css';
 // y el componente GraphQL (DetalleViaje) desde archivos independientes.
 // ---------------------------------------------------------------------------
 function App() {
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
+
   return (
-    <Router>
+    <Router basename={basename}>
       <div className="App">
         {/* Cabecera general */}
         <header className="App-header">
