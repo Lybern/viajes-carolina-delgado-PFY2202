@@ -8,20 +8,20 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 // ---------------------------------------------------------------------------
 // Configuración de Apollo Client para interactuar con la API GraphQL.
 // Apunta al endpoint virtual '/graphql' interceptado por MSW.
-// InMemoryCache almacena en memoria los resultados de las consultas realizadas,
-// evitando peticiones repetidas a los mismos recursos ya consultados.
+// addTypename: false evita advertencias en consola ya que el mock de MSW
+// devuelve únicamente los campos solicitados sin la metadata __typename.
 // ---------------------------------------------------------------------------
 const client = new ApolloClient({
   uri: '/graphql',
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    addTypename: false,
+  }),
 });
 
 // ---------------------------------------------------------------------------
 // Inicialización del Service Worker en el navegador.
-// Asegura que MSW comience a interceptar las peticiones antes de que React
-// intente montar los componentes y realizar solicitudes de red iniciales.
-// onUnhandledRequest: 'bypass' permite que los recursos estáticos (CSS, SVG, fuentes)
-// se carguen con normalidad sin ser bloqueados.
+// onUnhandledRequest: 'bypass' permite que los recursos estáticos fluyan con normalidad.
+// serviceWorker.url asegura la compatibilidad tanto en local como en GitHub Pages.
 // ---------------------------------------------------------------------------
 async function enableMocking() {
   const { worker } = await import('./mocks/browser');
@@ -38,7 +38,6 @@ enableMocking().then(() => {
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(
     <React.StrictMode>
-      {/* ApolloProvider proporciona la instancia de Apollo Client a todo el árbol de componentes */}
       <ApolloProvider client={client}>
         <App />
       </ApolloProvider>

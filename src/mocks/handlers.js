@@ -113,7 +113,11 @@ export const handlers = [
     // Simulación de latencia de red en la consulta GraphQL
     await delay(350);
 
-    const detalle = viajesPorDestino[destino];
+    // Búsqueda insensible a mayúsculas/minúsculas para máxima compatibilidad
+    const clave = Object.keys(viajesPorDestino).find(
+      (k) => k.toLowerCase() === (destino || '').toLowerCase()
+    );
+    const detalle = viajesPorDestino[clave] || viajesPorDestino[destino];
 
     // En GraphQL los errores se envuelven en un arreglo "errors" dentro del objeto de respuesta
     if (!detalle) {
