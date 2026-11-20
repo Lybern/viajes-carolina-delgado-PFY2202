@@ -1,6 +1,7 @@
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { gql, useQuery } from '@apollo/client';
+import { useParams, Link } from 'react-router';
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 
 // ---------------------------------------------------------------------------
 // Consulta GraphQL parametrizada para obtener vuelos y hoteles del destino.

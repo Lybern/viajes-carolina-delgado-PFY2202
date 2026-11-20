@@ -1,18 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { ApolloClient, InMemoryCache } from '@apollo/client';
+import { ApolloProvider } from '@apollo/client/react';
+import App from './App.jsx';
 import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 // ---------------------------------------------------------------------------
 // Configuración de Apollo Client para interactuar con la API GraphQL.
-// Apunta al endpoint virtual '/graphql' interceptado por MSW.
 // addTypename: false evita advertencias en consola ya que el mock de MSW
 // devuelve únicamente los campos solicitados sin la metadata __typename.
 // ---------------------------------------------------------------------------
 const client = new ApolloClient({
-  uri: '/graphql',
+  uri: `${import.meta.env.BASE_URL}graphql`,
   cache: new InMemoryCache({
     addTypename: false,
   }),
@@ -28,7 +27,8 @@ async function enableMocking() {
   return worker.start({
     onUnhandledRequest: 'bypass',
     serviceWorker: {
-      url: `${process.env.PUBLIC_URL || ''}/mockServiceWorker.js`,
+      url: `${import.meta.env.BASE_URL}mockServiceWorker.js`,
+      options: { scope: import.meta.env.BASE_URL },
     },
   });
 }
@@ -44,5 +44,3 @@ enableMocking().then(() => {
     </React.StrictMode>
   );
 });
-
-reportWebVitals();

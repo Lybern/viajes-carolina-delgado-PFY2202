@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 // ---------------------------------------------------------------------------
 // Componente Destinos: Consume la API REST Mock mediante HTTP GET /api/destinos.
