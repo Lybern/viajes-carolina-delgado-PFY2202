@@ -1,23 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { ApolloClient, HttpLink, InMemoryCache } from '@apollo/client';
 import { ApolloProvider } from '@apollo/client/react';
+import { apolloClient } from './graphql/client';
 import App from './App.jsx';
 import './index.css';
 
-// ---------------------------------------------------------------------------
-// Configuración de Apollo Client para interactuar con la API GraphQL.
-// En Apollo Client v4 es obligatorio definir la propiedad link con HttpLink.
-// addTypename: false evita advertencias en consola con el mock de MSW.
-// ---------------------------------------------------------------------------
 const baseUrl = import.meta.env.BASE_URL || '/';
-
-const client = new ApolloClient({
-  link: new HttpLink({ uri: `${baseUrl}graphql` }),
-  cache: new InMemoryCache({
-    addTypename: false,
-  }),
-});
 
 // ---------------------------------------------------------------------------
 // Inicialización del Service Worker en el navegador.
@@ -42,7 +30,7 @@ enableMocking()
     const root = ReactDOM.createRoot(document.getElementById('root'));
     root.render(
       <React.StrictMode>
-        <ApolloProvider client={client}>
+        <ApolloProvider client={apolloClient}>
           <App />
         </ApolloProvider>
       </React.StrictMode>
