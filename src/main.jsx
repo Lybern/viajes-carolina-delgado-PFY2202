@@ -6,7 +6,7 @@ import { apolloClient } from "./graphql/client";
 import "./index.css";
 
 // ---------------------------------------------------------------------------
-// Inicialización de la aplicación según la estructura de la clase del docente.
+// Inicialización principal de la aplicación.
 // Configura los proveedores globales (ApolloProvider y BrowserRouter con basename)
 // e inicia Mock Service Worker tanto en desarrollo como en compilación estática.
 // ---------------------------------------------------------------------------

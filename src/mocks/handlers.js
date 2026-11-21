@@ -1,7 +1,7 @@
 import { http, graphql, HttpResponse, delay } from 'msw';
 import { GRAPHQL_ENDPOINT } from '../graphql/endpoint';
 
-// Instancia de GraphQL vinculada al endpoint dinámico configurado por el docente
+// Instancia de GraphQL vinculada al endpoint dinámico
 const apiGraphql = graphql.link(GRAPHQL_ENDPOINT);
 
 // ---------------------------------------------------------------------------
@@ -115,7 +115,7 @@ const detallesPorDestino = {
 // Interceptores combinados REST y GraphQL
 // ---------------------------------------------------------------------------
 export const handlers = [
-  // Interceptor REST: GET /api/destinos (alineado con la sesión del docente)
+  // Interceptor REST: GET /api/destinos
   http.get('*/api/destinos', async ({ request }) => {
     await delay(600);
 
@@ -141,45 +141,36 @@ export const handlers = [
 
   // Interceptor GraphQL: ObtenerDetalleDestino
   apiGraphql.query('ObtenerDetalleDestino', async ({ variables }) => {
-    await delay(350);
+    await delay(700);
 
     const { id, destino, simularError } = variables || {};
     const destinoId = id || destino;
 
-    // 1. Simulación de error controlada (HTTP 200 con arreglo errors)
+    // 1. Simulación de error de GraphQL (status 404 con errors)
     if (simularError) {
-      return HttpResponse.json({
-        errors: [
-          {
-            message: 'No fue posible obtener los vuelos y hoteles del destino seleccionado.',
-            extensions: { code: 'ERROR_SIMULADO' },
-          },
-        ],
-      });
+      return HttpResponse.json(
+        {
+          errors: [
+            {
+              message: 'No fue posible obtener el detalle del destino.',
+              extensions: { code: 'ERROR_SIMULADO' },
+            },
+          ],
+        },
+        { status: 404 }
+      );
     }
 
-    // 2. Búsqueda insensible a mayúsculas/minúsculas
+    // 2. Búsqueda de destino por ID (insensible a mayúsculas)
     const clave = Object.keys(detallesPorDestino).find(
       (k) => k.toLowerCase() === (destinoId || '').toLowerCase()
     );
     const detalle = detallesPorDestino[clave] || detallesPorDestino[destinoId];
 
-    // 3. Destino no encontrado (HTTP 200 con código NO_ENCONTRADO en errors)
-    if (!detalle) {
-      return HttpResponse.json({
-        errors: [
-          {
-            message: `No se encontró el destino turístico con identificador "${destinoId}".`,
-            extensions: { code: 'NO_ENCONTRADO' },
-          },
-        ],
-      });
-    }
-
-    // 4. Respuesta exitosa envuelta en data
+    // 3. Respuesta GraphQL: si no existe devuelve null en data.destino
     return HttpResponse.json({
       data: {
-        destino: detalle,
+        destino: detalle ?? null,
       },
     });
   }),

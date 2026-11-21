@@ -7,7 +7,7 @@ import PaginaNoEncontrada from './pages/PaginaNoEncontrada';
 import './App.css';
 
 // ---------------------------------------------------------------------------
-// Función de consulta a la API REST mock según la arquitectura del docente.
+// Función de consulta a la API REST mock para el catálogo de destinos.
 // Maneja errores de servidor (404, 500) y contingencias de red (TypeError).
 // ---------------------------------------------------------------------------
 async function obtenerDestinos(tipoError = '', signal) {

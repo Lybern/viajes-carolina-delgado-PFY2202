@@ -2,9 +2,9 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router';
 
 // ---------------------------------------------------------------------------
-// Vista Destinos: Catálogo REST según el diseño de la sesión del docente.
+// Vista Destinos: Catálogo principal obtenido mediante la API REST mock.
 // Recibe como props los datos, estados y la función de carga desde App.
-// Incluye botones de prueba para simular códigos HTTP 404 y 500 en vivo,
+// Incluye controles de prueba para simular códigos HTTP 404 y 500 en vivo,
 // además de buscador por texto y filtros por país para una experiencia óptima.
 // ---------------------------------------------------------------------------
 export default function Destinos({
@@ -42,7 +42,7 @@ export default function Destinos({
       <h1>Destinos turísticos</h1>
       <p>Los destinos se consultan mediante una petición al servicio REST.</p>
 
-      {/* Botones de simulación idénticos a los del docente en sesion_semana5 */}
+      {/* Controles de prueba para simulación de respuestas */}
       <div className="acciones">
         <button
           type="button"
@@ -158,7 +158,7 @@ export default function Destinos({
 
           {destinosFiltrados.length === 0 && (
             <div className="sin-resultados">
-              <p>🔍 No se encontraron destinos con esos criterios.</p>
+              <p>🔍 No se encontraron destinos para tu búsqueda.</p>
               <button
                 type="button"
                 onClick={() => {
