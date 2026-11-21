@@ -1,38 +1,50 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { ApolloProvider } from '@apollo/client/react';
-import { apolloClient } from './graphql/client';
-import App from './App.jsx';
-import './index.css';
-
-const baseUrl = import.meta.env.BASE_URL || '/';
+import { ApolloProvider } from "@apollo/client/react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter } from "react-router";
+import App from "./App";
+import { apolloClient } from "./graphql/client";
+import "./index.css";
 
 // ---------------------------------------------------------------------------
-// Inicialización del Service Worker en el navegador.
-// onUnhandledRequest: 'bypass' permite que los recursos estáticos fluyan con normalidad.
-// serviceWorker.url y options.scope aseguran la compatibilidad en local y GitHub Pages.
+// Inicialización de la aplicación según la estructura de la clase del docente.
+// Configura los proveedores globales (ApolloProvider y BrowserRouter con basename)
+// e inicia Mock Service Worker tanto en desarrollo como en compilación estática.
 // ---------------------------------------------------------------------------
-async function enableMocking() {
-  const { worker } = await import('./mocks/browser');
-  return worker.start({
-    onUnhandledRequest: 'bypass',
-    serviceWorker: {
-      url: `${baseUrl}mockServiceWorker.js`,
-      options: { scope: baseUrl },
-    },
-  });
+async function iniciarAplicacion() {
+  // Mantiene los mocks activos también en la compilación estática (GitHub Pages)
+  const mocksHabilitados =
+    import.meta.env.DEV || import.meta.env.VITE_MSW_ENABLED !== "false";
+
+  if (mocksHabilitados) {
+    const { worker } = await import("./mocks/browser");
+
+    await worker.start({
+      onUnhandledRequest: "bypass",
+      serviceWorker: {
+        url: `${import.meta.env.BASE_URL}mockServiceWorker.js`,
+        options: { scope: import.meta.env.BASE_URL },
+      },
+    });
+  }
+
+  // BrowserRouter necesita un basename sin la barra final para rutas relativas
+  const basename = import.meta.env.BASE_URL.replace(/\/$/, "") || "/";
+
+  createRoot(document.getElementById("root")).render(
+    <ApolloProvider client={apolloClient}>
+      <BrowserRouter basename={basename}>
+        <App />
+      </BrowserRouter>
+    </ApolloProvider>
+  );
 }
 
-// Inicia el mock y monta la jerarquía de componentes en el DOM
-enableMocking()
-  .catch((err) => console.error('Error al iniciar MSW:', err))
-  .finally(() => {
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(
-      <React.StrictMode>
-        <ApolloProvider client={apolloClient}>
-          <App />
-        </ApolloProvider>
-      </React.StrictMode>
-    );
-  });
+iniciarAplicacion().catch((error) => {
+  console.error("No se pudo iniciar la aplicación:", error);
+
+  const rootElement = document.getElementById("root");
+  if (rootElement) {
+    rootElement.textContent =
+      "No se pudo iniciar la aplicación. Revisen la consola del navegador.";
+  }
+});

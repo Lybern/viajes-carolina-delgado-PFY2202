@@ -1,93 +1,80 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router';
-import Destinos from './Destinos';
-import DetalleViaje from './DetalleViaje';
+import { Routes, Route, NavLink, Link } from 'react-router';
+import Inicio from './pages/Inicio';
+import Destinos from './pages/Destinos';
+import DetalleDestino from './pages/DetalleDestino';
+import PaginaNoEncontrada from './pages/PaginaNoEncontrada';
 import './App.css';
 
 // ---------------------------------------------------------------------------
-// Componente principal: Configura el enrutador y la estructura de navegación.
-// Modulariza las vistas importando el componente REST (Destinos)
-// y el componente GraphQL (DetalleViaje) desde archivos independientes.
+// Componente principal: Configura la estructura de navegación y las rutas.
+// El BrowserRouter global está provisto en src/main.jsx según la arquitectura
+// de la clase del docente.
 // ---------------------------------------------------------------------------
 function App() {
-  const basename = import.meta.env.BASE_URL.replace(/\/$/, '') || '/';
-
   return (
-    <Router basename={basename}>
-      <div className="App">
-        {/* Cabecera general */}
+    <div className="App">
+        {/* Cabecera institucional */}
         <header className="App-header">
-          <h1>Agencia de Viajes Global</h1>
-          <p>Explora destinos del mundo y planifica tu próximo viaje</p>
+          <div className="header-contenido">
+            <Link to="/" className="brand-link">
+              <span className="brand-icono">✈️</span>
+              <div>
+                <h1>Agencia de Viajes Global</h1>
+                <p>Explora destinos del mundo y planifica tu próximo viaje</p>
+              </div>
+            </Link>
+          </div>
         </header>
 
         <div className="content">
-          {/* Menú de navegación lateral */}
+          {/* Menú de navegación accesible con NavLink */}
           <nav className="side-menu" aria-label="Menú principal">
             <h2>Navegación</h2>
             <ul>
-              <li><Link to="/">Inicio</Link></li>
-              <li><Link to="/destinos">Destinos</Link></li>
+              <li>
+                <NavLink
+                  to="/"
+                  end
+                  className={({ isActive }) => (isActive ? 'nav-link activo' : 'nav-link')}
+                >
+                  🏠 Inicio
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/destinos"
+                  className={({ isActive }) => (isActive ? 'nav-link activo' : 'nav-link')}
+                >
+                  📍 Destinos
+                </NavLink>
+              </li>
             </ul>
           </nav>
 
-          {/* Enrutamiento hacia las vistas modulares */}
-          <main className="main-content">
+          {/* Enrutamiento hacia las vistas modulares en src/pages/ */}
+          <main className="main-content" id="contenido-principal">
             <Routes>
-              {/* Portada de bienvenida */}
+              {/* Portada institucional */}
               <Route path="/" element={<Inicio />} />
 
-              {/* Vista REST: Catálogo de destinos */}
+              {/* Catálogo REST de destinos */}
               <Route path="/destinos" element={<Destinos />} />
 
-              {/* Vista GraphQL: Detalle parametrizado de vuelos y hoteles */}
-              <Route path="/destino/:destino" element={<DetalleViaje />} />
+              {/* Detalle GraphQL de vuelos y hoteles para el destino seleccionado */}
+              <Route path="/destino/:id" element={<DetalleDestino />} />
 
-              {/* Ruta comodín para páginas inexistentes */}
-              <Route path="*" element={<NoEncontrado />} />
+              {/* Ruta comodín para páginas inexistentes (404) */}
+              <Route path="*" element={<PaginaNoEncontrada />} />
             </Routes>
           </main>
         </div>
 
-        {/* Pie de página */}
+        {/* Pie de página institucional */}
         <footer>
           <p>© 2026 Agencia de Viajes Global. Todos los derechos reservados.</p>
         </footer>
       </div>
-    </Router>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Vista de Inicio: Mensaje de bienvenida y acceso rápido al catálogo.
-// ---------------------------------------------------------------------------
-function Inicio() {
-  return (
-    <div className="card-bienvenida">
-      <h2>Encuentra tu próximo destino</h2>
-      <p>
-        Descubre opciones de viaje por el mundo con información detallada de cada país y sus actividades más populares.
-      </p>
-      <p>
-        Elige un destino para consultar vuelos y hoteles disponibles en tiempo real.
-      </p>
-      <Link to="/destinos" className="btn-primario">
-        Ver catálogo de destinos
-      </Link>
-    </div>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Vista 404: Se muestra cuando la ruta no coincide con ninguna ruta válida.
-// ---------------------------------------------------------------------------
-function NoEncontrado() {
-  return (
-    <div className="mensaje-error">
-      <h2>404 - Página no encontrada</h2>
-      <p>La ruta que buscas no existe.</p>
-      <Link to="/" className="btn-secundario">Volver al inicio</Link>
-    </div>
   );
 }
 
