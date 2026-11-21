@@ -115,16 +115,23 @@ const detallesPorDestino = {
 // Interceptores combinados REST y GraphQL
 // ---------------------------------------------------------------------------
 export const handlers = [
-  // Interceptor REST: GET /api/destinos
+  // Interceptor REST: GET /api/destinos (alineado con la sesión del docente)
   http.get('*/api/destinos', async ({ request }) => {
-    await delay(350);
+    await delay(600);
 
     const url = new URL(request.url);
+    const error = url.searchParams.get('error') || (url.searchParams.get('simularError') === 'true' ? '500' : null);
 
-    // Simulación de error de servidor REST para pruebas (?simularError=true)
-    if (url.searchParams.get('simularError') === 'true') {
+    if (error === '404') {
       return HttpResponse.json(
-        { message: 'Error interno del servidor al obtener el catálogo de destinos.' },
+        { mensaje: 'El recurso de destinos no fue encontrado' },
+        { status: 404 }
+      );
+    }
+
+    if (error === '500') {
+      return HttpResponse.json(
+        { mensaje: 'Error interno del servidor' },
         { status: 500 }
       );
     }
