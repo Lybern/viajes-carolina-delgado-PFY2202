@@ -2,12 +2,16 @@ import React from 'react';
 import { useQuery } from '@apollo/client/react';
 import { Link, useParams, useSearchParams } from 'react-router';
 import { OBTENER_DETALLE_DESTINO } from '../graphql/operaciones';
+import Boton from '../components/atoms/Boton';
+import EstadoCarga from '../components/molecules/EstadoCarga';
+import AlertaError from '../components/molecules/AlertaError';
+import TarjetaVuelo from '../components/molecules/TarjetaVuelo';
+import TarjetaHotel from '../components/molecules/TarjetaHotel';
 
 // ---------------------------------------------------------------------------
-// Vista DetalleDestino: Consulta de opciones de viaje parametrizadas.
-// Consume GraphQL mediante useQuery, gestiona parámetros de ruta (:id)
-// y alternancia del error simulado mediante useSearchParams (?error=graphql).
-// Incluye vuelos y hoteles según los requerimientos de la Agencia de Viajes.
+// Página: Detalle de Viaje (GraphQL).
+// Ensambla los componentes de presentación y consume GraphQL mediante useQuery.
+// Lee el parámetro de ruta (:id) y alterna errores con useSearchParams.
 // ---------------------------------------------------------------------------
 export default function DetalleDestino() {
   const { id } = useParams();
@@ -23,121 +27,124 @@ export default function DetalleDestino() {
   const hoteles = destino?.hoteles || [];
 
   return (
-    <section className="detalle-destino-vista">
-      <h1>Detalle del destino</h1>
-
-      <p>
-        El catálogo se obtuvo mediante REST. Este detalle se consulta mediante
-        GraphQL simulado con MSW.
-      </p>
+    <section className="flex flex-col gap-6">
+      <div>
+        <h1 className="text-2xl font-extrabold text-slate-800 m-0 mb-1">
+          Detalle del destino
+        </h1>
+        <p className="text-slate-500 text-sm m-0">
+          El catálogo se obtuvo mediante REST. Este detalle se consulta mediante
+          GraphQL simulado con MSW.
+        </p>
+      </div>
 
       {/* Controles de navegación y prueba de estados */}
-      <div className="acciones">
-        <Link to="/destinos" className="btn-secundario">
+      <div className="flex flex-wrap items-center gap-3">
+        <Link
+          to="/destinos"
+          className="inline-flex items-center justify-center font-semibold rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-4 py-2 text-sm transition-all duration-200"
+        >
           Volver al catálogo
         </Link>
 
         {simularError ? (
-          <button
-            type="button"
+          <Boton
+            variant="simulationActive"
             onClick={() => setSearchParams({})}
-            className="btn-simulacion activo"
           >
             Desactivar error simulado
-          </button>
+          </Boton>
         ) : (
-          <button
-            type="button"
+          <Boton
+            variant="simulation"
             onClick={() => setSearchParams({ error: 'graphql' })}
-            className="btn-simulacion"
           >
             Simular error GraphQL
-          </button>
+          </Boton>
         )}
       </div>
 
       {/* Estado de carga accesible */}
       {loading && (
-        <div className="mensaje-estado" role="status">
-          <div className="spinner"></div>
-          <p>Cargando detalle del destino...</p>
-        </div>
+        <EstadoCarga mensaje={`Cargando detalle del destino ${id}...`} />
       )}
 
-      {/* Manejo de error de GraphQL con reintento condicional */}
+      {/* Manejo de error de GraphQL */}
       {error && (
-        <div className="mensaje-error" role="alert">
-          <p>{error.message}</p>
-
-          {!simularError && (
-            <button
-              type="button"
-              onClick={() => refetch()}
-              disabled={loading}
-              className="btn-reintentar"
-            >
-              Reintentar
-            </button>
-          )}
-        </div>
+        <AlertaError
+          mensaje={error.message}
+          onReintentar={!simularError ? () => refetch() : null}
+          disabledReintento={loading}
+          mostrarVolver={false}
+        />
       )}
 
-      {/* Manejo de destino inexistente cuando data.destino es null */}
+      {/* Destino no encontrado */}
       {!loading && !error && !destino && (
-        <div className="mensaje-error" role="alert">
-          <p>
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm" role="alert">
+          <p className="font-medium mb-3">
             No se encontró un destino con el identificador {id}. Verifica el
             enlace o vuelve al catálogo.
           </p>
-          <Link to="/destinos" className="btn-secundario">
+          <Link
+            to="/destinos"
+            className="inline-flex items-center justify-center font-semibold rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-4 py-2 text-sm transition-all duration-200"
+          >
             Volver al catálogo
           </Link>
         </div>
       )}
 
-      {/* Despliegue de información de vuelos y hoteles para el destino */}
+      {/* Información detallada de vuelos y hoteles */}
       {!loading && !error && destino && (
-        <div className="detalle-contenido">
-          <div className="detalle-encabezado-destino">
-            <h2>{destino.nombre}</h2>
-            <span className="destino-pais-badge">📍 {destino.pais}</span>
+        <div className="flex flex-col gap-6">
+          <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs flex items-center justify-between flex-wrap gap-3">
+            <div>
+              <h2 className="text-xl font-bold text-slate-800 m-0">
+                {destino.nombre}
+              </h2>
+              <p className="text-xs text-slate-500 m-0 mt-1">
+                Opciones disponibles para tu itinerario
+              </p>
+            </div>
+            <span className="inline-block bg-blue-50 text-blue-800 text-xs font-bold px-3 py-1 rounded-full border border-blue-200">
+              📍 {destino.pais}
+            </span>
           </div>
 
           {/* Sección de vuelos (GraphQL) */}
-          <div className="bloque-opciones">
-            <h3>✈️ Vuelos disponibles</h3>
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 m-0 mb-3 flex items-center gap-2">
+              ✈️ Vuelos disponibles
+            </h3>
             {vuelos.length > 0 ? (
-              <div className="grid-cards">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {vuelos.map((vuelo, index) => (
-                  <div key={index} className="card-item vuelo">
-                    <h4>{vuelo.aerolinea}</h4>
-                    <p>📅 <strong>Fechas:</strong> {vuelo.fechas}</p>
-                    <p className="precio">💵 {vuelo.precio}</p>
-                    <p className="disponibilidad">🎟️ {vuelo.disponibilidad}</p>
-                  </div>
+                  <TarjetaVuelo key={index} vuelo={vuelo} />
                 ))}
               </div>
             ) : (
-              <p className="mensaje-vacio">No hay vuelos registrados para este destino.</p>
+              <p className="text-slate-500 italic p-4 bg-white rounded-lg border border-dashed border-slate-300">
+                No hay vuelos registrados para este destino.
+              </p>
             )}
           </div>
 
           {/* Sección de hoteles (GraphQL) */}
-          <div className="bloque-opciones">
-            <h3>🏨 Hoteles disponibles</h3>
+          <div>
+            <h3 className="text-lg font-bold text-slate-800 m-0 mb-3 flex items-center gap-2">
+              🏨 Hoteles disponibles
+            </h3>
             {hoteles.length > 0 ? (
-              <div className="grid-cards">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {hoteles.map((hotel, index) => (
-                  <div key={index} className="card-item hotel">
-                    <h4>{hotel.nombre}</h4>
-                    <p>📅 <strong>Fechas:</strong> {hotel.fechas}</p>
-                    <p className="precio">💵 {hotel.precio}</p>
-                    <p className="disponibilidad">🛏️ {hotel.disponibilidad}</p>
-                  </div>
+                  <TarjetaHotel key={index} hotel={hotel} />
                 ))}
               </div>
             ) : (
-              <p className="mensaje-vacio">No hay alojamientos registrados para este destino.</p>
+              <p className="text-slate-500 italic p-4 bg-white rounded-lg border border-dashed border-slate-300">
+                No hay alojamientos registrados para este destino.
+              </p>
             )}
           </div>
         </div>

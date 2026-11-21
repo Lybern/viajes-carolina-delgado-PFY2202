@@ -1,11 +1,14 @@
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router';
+import Boton from '../components/atoms/Boton';
+import EstadoCarga from '../components/molecules/EstadoCarga';
+import AlertaError from '../components/molecules/AlertaError';
+import BarraBusqueda from '../components/molecules/BarraBusqueda';
+import TarjetaDestino from '../components/molecules/TarjetaDestino';
 
 // ---------------------------------------------------------------------------
-// Vista Destinos: Catálogo principal obtenido mediante la API REST mock.
-// Recibe como props los datos, estados y la función de carga desde App.
-// Incluye controles de prueba para simular códigos HTTP 404 y 500 en vivo,
-// además de buscador por texto y filtros por país para una experiencia óptima.
+// Página: Catálogo de Destinos (REST).
+// Ensambla los componentes de presentación (Átomos y Moléculas)
+// y recibe el estado y las funciones de control provistas por App.
 // ---------------------------------------------------------------------------
 export default function Destinos({
   destinos = [],
@@ -22,7 +25,7 @@ export default function Destinos({
     return Array.from(setPaises);
   }, [destinos]);
 
-  // Filtrado reactivo de destinos por término de búsqueda y país
+  // Filtrado reactivo de destinos por texto y país
   const destinosFiltrados = useMemo(() => {
     const termino = busqueda.trim().toLowerCase();
     return destinos.filter((destino) => {
@@ -38,137 +41,94 @@ export default function Destinos({
   }, [destinos, busqueda, paisSeleccionado]);
 
   return (
-    <section className="destinos-vista">
-      <h1>Destinos turísticos</h1>
-      <p>Los destinos se consultan mediante una petición al servicio REST.</p>
+    <section className="flex flex-col gap-5">
+      <div>
+        <h1 className="text-2xl font-extrabold text-slate-800 m-0 mb-1">
+          Destinos turísticos
+        </h1>
+        <p className="text-slate-500 text-sm m-0">
+          Los destinos se consultan mediante una petición al servicio REST.
+        </p>
+      </div>
 
       {/* Controles de prueba para simulación de respuestas */}
-      <div className="acciones">
-        <button
-          type="button"
+      <div className="flex flex-wrap gap-2.5">
+        <Boton
           onClick={() => cargarDestinos()}
           disabled={cargando}
+          variant="secondary"
         >
           Actualizar destinos
-        </button>
+        </Boton>
 
-        <button
-          type="button"
+        <Boton
           onClick={() => cargarDestinos('404')}
           disabled={cargando}
+          variant="simulation"
         >
           Simular error 404
-        </button>
+        </Boton>
 
-        <button
-          type="button"
+        <Boton
           onClick={() => cargarDestinos('500')}
           disabled={cargando}
+          variant="simulation"
         >
           Simular error 500
-        </button>
+        </Boton>
       </div>
 
       {/* Indicador de carga accesible */}
-      {cargando && (
-        <div className="mensaje-estado" role="status">
-          <div className="spinner"></div>
-          <p>Cargando destinos...</p>
-        </div>
-      )}
+      {cargando && <EstadoCarga mensaje="Cargando destinos..." />}
 
-      {/* Manejo de error accesible con botón de reintento */}
+      {/* Manejo de error con reintento */}
       {error && (
-        <div className="mensaje-error" role="alert">
-          <p><strong>Error:</strong> {error}</p>
-          <button
-            type="button"
-            onClick={() => cargarDestinos()}
-            disabled={cargando}
-            className="btn-reintentar"
-          >
-            Reintentar
-          </button>
-        </div>
+        <AlertaError
+          mensaje={error}
+          onReintentar={() => cargarDestinos()}
+          disabledReintento={cargando}
+        />
       )}
 
-      {/* Sin destinos */}
+      {/* Sin destinos registrados */}
       {!cargando && !error && destinos.length === 0 && (
-        <p className="mensaje-vacio">No hay destinos disponibles por el momento.</p>
+        <p className="text-slate-500 italic p-4 bg-white rounded-lg border border-dashed border-slate-300">
+          No hay destinos disponibles por el momento.
+        </p>
       )}
 
-      {/* Buscador interactivo y filtros cuando hay datos */}
+      {/* Buscador y catálogo de destinos */}
       {!cargando && !error && destinos.length > 0 && (
         <>
-          <div className="barra-busqueda-contenedor">
-            <div className="barra-busqueda-principal">
-              <input
-                type="search"
-                placeholder="🔍 Buscar por nombre o actividad (ej. Louvre, playa, templo)..."
-                value={busqueda}
-                onChange={(e) => setBusqueda(e.target.value)}
-                className="input-busqueda"
-              />
-              {busqueda && (
-                <button
-                  type="button"
-                  onClick={() => setBusqueda('')}
-                  className="btn-limpiar"
-                >
-                  ✕
-                </button>
-              )}
-            </div>
+          <BarraBusqueda
+            busqueda={busqueda}
+            onCambioBusqueda={setBusqueda}
+            paises={paisesDisponibles}
+            paisSeleccionado={paisSeleccionado}
+            onSeleccionarPais={setPaisSeleccionado}
+          />
 
-            <div className="filtros-paises">
-              <span className="filtro-etiqueta">País:</span>
-              <button
-                type="button"
-                onClick={() => setPaisSeleccionado('Todos')}
-                className={`chip-filtro ${paisSeleccionado === 'Todos' ? 'activo' : ''}`}
-              >
-                Todos
-              </button>
-              {paisesDisponibles.map((pais) => (
-                <button
-                  key={pais}
-                  type="button"
-                  onClick={() => setPaisSeleccionado(pais)}
-                  className={`chip-filtro ${paisSeleccionado === pais ? 'activo' : ''}`}
-                >
-                  {pais}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Cuadrícula de tarjetas de destinos */}
-          <div className="grid-destinos">
+          {/* Cuadrícula de tarjetas de destinos (3 cortes: móvil 1 col, tablet 2 cols, desktop 3 cols) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {destinosFiltrados.map((destino) => (
-              <article className="card-destino" key={destino.id}>
-                <h2>{destino.nombre}</h2>
-                <p className="pais">📍 País: <strong>{destino.pais}</strong></p>
-                <p className="actividades">🎯 <strong>Actividades:</strong> {destino.actividades}</p>
-                <Link to={`/destinos/${destino.id}`} className="btn-detalle">
-                  Ver detalle →
-                </Link>
-              </article>
+              <TarjetaDestino key={destino.id} destino={destino} />
             ))}
           </div>
 
           {destinosFiltrados.length === 0 && (
-            <div className="sin-resultados">
-              <p>🔍 No se encontraron destinos para tu búsqueda.</p>
-              <button
-                type="button"
+            <div className="bg-white p-6 rounded-xl border border-slate-200 text-center">
+              <p className="text-slate-600 mb-3">
+                🔍 No se encontraron destinos para tu búsqueda.
+              </p>
+              <Boton
+                variant="secondary"
                 onClick={() => {
                   setBusqueda('');
                   setPaisSeleccionado('Todos');
                 }}
-                className="btn-secundario"
               >
                 Limpiar filtros
-              </button>
+              </Boton>
             </div>
           )}
         </>
