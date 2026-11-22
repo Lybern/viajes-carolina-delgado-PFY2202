@@ -1,141 +1,148 @@
 # Agencia de Viajes Global
 
-Aplicación web frontend moderna desarrollada con **React 19**, **Vite** y **Tailwind CSS**, diseñada bajo una arquitectura desacoplada que integra servicios simulados **REST** y **GraphQL** mediante **Mock Service Worker (MSW)**, enrutamiento declarativo con **React Router** y gestión de estado con **Apollo Client**.
+Aplicación web desarrollada con **React 19**, **Vite** y **Tailwind CSS**, diseñada bajo una arquitectura desacoplada que integra servicios simulados **REST** y **GraphQL** mediante **Mock Service Worker (MSW)**, enrutamiento declarativo con **React Router** (`react-router`) y gestión de consultas GraphQL con **Apollo Client v4**.
 
-* **Despliegue en producción:** [https://lybern.github.io/viajes-carolina-delgado-PFY2202/](https://lybern.github.io/viajes-carolina-delgado-PFY2202/)
+* **Despliegue en producción (GitHub Pages):** [https://lybern.github.io/viajes-carolina-delgado-PFY2202/](https://lybern.github.io/viajes-carolina-delgado-PFY2202/)
 * **Repositorio:** [https://github.com/Lybern/viajes-carolina-delgado-PFY2202](https://github.com/Lybern/viajes-carolina-delgado-PFY2202)
 
 ---
 
-## 🛠️ Tecnologías Utilizadas
+## Tecnologías Utilizadas
 
 | Categoría | Tecnología | Versión | Propósito |
 | :--- | :--- | :--- | :--- |
-| **Entorno y Bundler** | [Vite](https://vitejs.dev/) | `^8.3.8` | Servidor ultrarrápido con ESM nativo y Rollup |
-| **Librería UI** | [React](https://react.dev/) | `^19.3.1` | Renderizado declarativo basado en componentes |
-| **Enrutamiento** | [React Router](https://reactrouter.com/) | `^7.18.6` | Navegación SPA sin dependencias obsoletas |
-| **Cliente GraphQL** | [Apollo Client](https://www.apollographql.com/) | `^4.3.8` | Gestión de consultas GraphQL, enlaces HTTP y caché en memoria |
-| **Mocking de APIs** | [Mock Service Worker (MSW)](https://mswjs.io/) | `^2.15.0` | Intercepción de peticiones REST y GraphQL vía Service Worker |
-| **Estilos y Diseño** | [Tailwind CSS](https://tailwindcss.com/) | `^3.4.19` | Framework de utilidades con diseño responsivo en 3 cortes |
-| **Despliegue** | [gh-pages](https://www.npmjs.com/package/gh-pages) | `^6.3.0` | Publicación automatizada en GitHub Pages con fallback 404 SPA |
+| **Entorno y Bundler** | Vite | `^8.3.8` | Servidor de desarrollo con ESM nativo y compilación para producción |
+| **Librería UI** | React | `^19.3.1` | Renderizado declarativo basado en componentes modulares |
+| **Enrutamiento** | React Router (`react-router`) | `^7.18.6` | Navegación SPA unificada con soporte de `basename` dinámico |
+| **Cliente GraphQL** | Apollo Client (`@apollo/client`) | `^4.3.8` | Gestión de consultas GraphQL, `HttpLink` y caché en memoria (`InMemoryCache`) |
+| **Mocking de APIs** | Mock Service Worker (MSW) | `^2.15.0` | Intercepción de peticiones REST y GraphQL vía Service Worker en navegador |
+| **Estilos y Diseño** | Tailwind CSS | `^3.4.19` | Sistema de utilidades CSS con diseño responsivo en 3 cortes |
+| **Despliegue** | GitHub Pages (`gh-pages`) | `^6.3.0` | Publicación estática con respaldo `404.html` para rutas SPA |
 
 ---
 
-## 🔄 Tabla Comparativa: Migración de Create React App (CRA) a Vite
+## Registro de la Migración de Create React App (CRA) a Vite
 
-| Aspecto | Create React App (CRA) - Anterior | Vite - Implementación Actual |
-| :--- | :--- | :--- |
-| **Estado de soporte** | Declarado obsoleto | Estándar moderno de la industria |
-| **Punto de entrada** | `public/index.html` (procesado por Webpack) | `index.html` en la raíz con `<script type="module" src="/src/main.jsx">` |
-| **Extensiones de archivo** | `.js` permitía sintaxis JSX | `.jsx` explícito obligatorio para módulos con componentes |
-| **Compilación y Build** | `react-scripts` (Webpack + Babel, ~15-30s) | `vite build` (Rollup + esbuild, ~1-2s) |
-| **Variables de entorno** | `process.env.REACT_APP_*` | `import.meta.env.*` (ej. `BASE_URL`, `MODE`) |
-| **Enrutador** | `react-router-dom` | `react-router` (importaciones directas desde el paquete unificado) |
-| **Cliente GraphQL** | Apollo Client v3 (`new ApolloClient({ uri })`) | Apollo Client v4 (`new ApolloClient({ link: new HttpLink({ uri }) })`) |
+Siguiendo el procedimiento de migración de la asignatura, el proyecto fue migrado desde Create React App (`react-scripts`) hacia Vite:
+
+| Antecedente | Información registrada |
+| :--- | :--- |
+| **Fecha de migración** | 20 de noviembre de 2026 |
+| **Entorno utilizado** | Node.js `v24.21.0` y npm `11.19.0` |
+| **Herramientas instaladas** | `vite@^8.3.8` y `@vitejs/plugin-react@^6.3.0` |
+| **Archivos modificados** | Creación de `vite.config.mjs`, traslado de `index.html` a la raíz, renombrado de `src/index.js` a `src/main.jsx` y componentes con JSX a `.jsx`, adaptación de variables de entorno a `import.meta.env.*` y actualización de scripts en `package.json` |
+| **Ajustes adicionales** | Consolidación de rutas en `react-router`, migración a Apollo Client v4 (`HttpLink`, `InMemoryCache({ addTypename: false })`, `@apollo/client/react`), integración de Tailwind CSS y configuración de `base` para GitHub Pages |
+| **Validaciones realizadas** | Verificación funcional con `npm run dev`, compilación limpia con `npm run build` y comprobación del resultado compilado con `npm run preview` |
+| **Situaciones pendientes** | Sin situaciones pendientes; el proyecto dejó de depender por completo de `react-scripts` |
 
 ---
 
-## 🏛️ Arquitectura del Proyecto (Atomic Design)
+## Arquitectura del Proyecto (Atomic Design)
 
-El código fuente se organiza bajo la metodología **Atomic Design**, separando la presentación visual de la lógica de datos y las vistas de página:
+El código fuente está organizado aplicando principios de **Atomic Design**, separando los componentes de presentación visual (átomos y moléculas) de las páginas y de la capa de comunicación con servicios:
 
 ```text
 viajes-carolina-delgado-pfy2202/
 ├── public/
+│   ├── favicon.ico                # Ícono de la aplicación
 │   └── mockServiceWorker.js       # Script del Service Worker para MSW
 ├── src/
-│   ├── components/                # Componentes de presentación (Atomic Design)
-│   │   ├── atoms/                 # Átomos: bloques elementales indivisibles
-│   │   │   ├── Boton.jsx          # Botón reutilizable con variantes y estados
-│   │   │   ├── CampoTexto.jsx     # Input de texto con estilos estándar
-│   │   │   └── Spinner.jsx        # SVG circular animado para estados de carga
-│   │   └── molecules/             # Moléculas: composiciones funcionales
-│   │       ├── AlertaError.jsx    # Caja de alerta con role="alert" y reintento
-│   │       ├── BarraBusqueda.jsx  # Input de búsqueda combinado con chips de filtro
-│   │       ├── EstadoCarga.jsx    # Spinner + mensaje accesible (role="status")
-│   │       ├── TarjetaDestino.jsx # Tarjeta individual del catálogo REST
-│   │       ├── TarjetaHotel.jsx   # Tarjeta de alojamiento de GraphQL
-│   │       └── TarjetaVuelo.jsx   # Tarjeta de vuelo de GraphQL
-│   ├── graphql/                   # Módulo centralizado de GraphQL
-│   │   ├── client.js              # Instancia de Apollo Client con HttpLink y cache
-│   │   ├── endpoint.js            # Definición dinámica del endpoint GraphQL
-│   │   └── operaciones.js         # Query ObtenerDetalleDestino con parámetros
-│   ├── mocks/                     # Módulo de simulación de servicios (MSW)
-│   │   ├── browser.js             # Inicialización de setupWorker para navegador
-│   │   └── handlers.js            # Interceptores para API REST y GraphQL
-│   ├── pages/                     # Páginas / Vistas completas de la aplicación
-│   │   ├── Destinos.jsx           # Catálogo REST con búsqueda y filtros reactivos
-│   │   ├── DetalleDestino.jsx     # Detalle GraphQL con vuelos, hoteles y errores
-│   │   ├── Inicio.jsx             # Portada de bienvenida institucional
-│   │   └── PaginaNoEncontrada.jsx # Vista 404 para rutas inexistentes
-│   ├── App.jsx                    # Contenedor principal, layout y enrutador
-│   ├── index.css                  # Directivas base de Tailwind CSS
-│   └── main.jsx                   # Punto de entrada, ApolloProvider y BrowserRouter
-├── index.html                     # Entrada HTML principal de Vite
-├── package.json                   # Dependencias y scripts de compilación
-├── postcss.config.js              # Configuración de PostCSS para Tailwind
-├── tailwind.config.js             # Configuración de Tailwind CSS y breakpoints
-└── vite.config.mjs                # Configuración de Vite con base dinámica
+│   ├── components/                # Componentes reutilizables (Atomic Design)
+│   │   ├── atoms/                 # Átomos: elementos base de interfaz
+│   │   │   ├── Boton.jsx          # Botón parametrizable con variantes visuales
+│   │   │   ├── CampoTexto.jsx     # Campo de entrada de texto reutilizable
+│   │   │   └── Spinner.jsx        # Indicador vectorial animado de carga
+│   │   └── molecules/             # Moléculas: unidades funcionales compuestas
+│   │       ├── AlertaError.jsx    # Alerta accesible (role="alert") diferenciada por código
+│   │       ├── BarraBusqueda.jsx  # Buscador de texto con chips de filtro por país
+│   │       ├── EstadoCarga.jsx    # Indicador accesible de espera (role="status")
+│   │       ├── TarjetaDestino.jsx # Ficha de destino turístico obtenida vía REST
+│   │       ├── TarjetaHotel.jsx   # Ficha de alojamiento obtenida vía GraphQL
+│   │       └── TarjetaVuelo.jsx   # Ficha de itinerario aéreo obtenida vía GraphQL
+│   ├── graphql/                   # Configuración y operaciones GraphQL
+│   │   ├── client.js              # Instancia de Apollo Client con HttpLink e InMemoryCache
+│   │   ├── endpoint.js            # Endpoints dinámicos con import.meta.env.BASE_URL
+│   │   └── operaciones.js         # Query ObtenerDetalleDestino parametrizada
+│   ├── mocks/                     # Simulación de backend con MSW
+│   │   ├── browser.js             # Configuración de setupWorker para navegador
+│   │   └── handlers.js            # Interceptores combinados para REST y GraphQL
+│   ├── pages/                     # Vistas / Páginas asociadas a rutas
+│   │   ├── Destinos.jsx           # Catálogo REST con AbortController y filtros con useMemo
+│   │   ├── DetalleDestino.jsx     # Vista detallada GraphQL de vuelos y hoteles por destino
+│   │   ├── Inicio.jsx             # Portada de bienvenida
+│   │   └── PaginaNoEncontrada.jsx # Vista 404 para rutas no registradas
+│   ├── App.jsx                    # Layout general y definición de rutas con react-router
+│   ├── index.css                  # Directivas y estilos base de Tailwind CSS
+│   └── main.jsx                   # Punto de entrada, arranque de MSW, ApolloProvider y BrowserRouter
+├── .env.example                   # Variables de entorno de ejemplo (VITE_MSW_ENABLED)
+├── index.html                     # Documento HTML raíz de Vite
+├── package.json                   # Dependencias y scripts de desarrollo, build y deploy
+├── postcss.config.js              # Configuración de PostCSS
+├── tailwind.config.js             # Configuración de Tailwind CSS y cortes responsivos
+└── vite.config.mjs                # Configuración de Vite
 ```
 
 ---
 
-## 📡 Servicios y Contratos de Datos
+## Servicios Simulados y Contratos de Datos
 
-### 1. API REST: Catálogo de Destinos
-* **Ruta:** `GET /api/destinos`
-* **Parámetros de consulta:**
-  * `?error=404`: Simula respuesta HTTP 404 con mensaje estructurado.
-  * `?error=500`: Simula fallo interno del servidor HTTP 500.
-* **Modelo de datos:**
+### 1. API REST Mock: Catálogo de Destinos
+* **Endpoint:** `GET ${import.meta.env.BASE_URL}api/destinos`
+* **Parámetros de prueba:**
+  * `?error=404`: Simula respuesta HTTP 404 con cuerpo JSON `{ "mensaje": "..." }`.
+  * `?error=500`: Simula fallo interno del servidor HTTP 500 con cuerpo JSON `{ "mensaje": "..." }`.
+* **Estructura devuelta:**
   ```json
   [
     {
-      "id": "Tokio",
-      "nombre": "Tokio",
-      "pais": "Japón",
-      "actividades": "Templo Senso-ji, Cruce de Shibuya, Excursión al Monte Fuji"
+      "id": "Paris",
+      "nombre": "París",
+      "pais": "Francia",
+      "descripcion": "La Ciudad de la Luz cautiva con su arquitectura histórica, museos de clase mundial y paseos junto al río Sena.",
+      "temporada": "Abril a octubre (Primavera - Otoño)",
+      "precioDesde": "$1.090 USD",
+      "actividades": "Torre Eiffel, Museo del Louvre, Crucero por el Sena, Barrio de Montmartre"
     }
   ]
   ```
 
-### 2. GraphQL: Itinerarios y Opciones de Viaje
+### 2. API GraphQL Mock: Vuelos y Hoteles por Destino
+* **Endpoint:** `POST ${import.meta.env.BASE_URL}graphql`
 * **Operación:** `query ObtenerDetalleDestino($id: ID!, $simularError: Boolean = false)`
-* **Manejo de variables:**
-  * `$id`: Identificador del destino seleccionado (ej. `"Paris"`, `"Tokio"`).
-  * `$simularError`: Al activarse (`true`), MSW devuelve un arreglo `errors` con código `ERROR_SIMULADO`.
-* **Esquema devuelto:**
-  * `vuelos`: Listado con aerolínea, fechas, precio y disponibilidad de asientos.
-  * `hoteles`: Listado con nombre del alojamiento, fechas de estadía, tarifa por noche y habitaciones disponibles.
+* **Configuración de caché:** `new InMemoryCache({ addTypename: false })` para operar con respuestas simuladas de MSW sin requerir el campo `__typename`.
+* **Manejo de errores en GraphQL:** Cuando `$simularError` es `true`, el interceptor de MSW responde con estado HTTP `200 OK` e incluye el arreglo `errors: [{ message: "...", extensions: { code: "ERROR_SIMULADO" } }]`.
+* **Datos consultados:** Información del destino junto con sus listas de `vuelos` (id, aerolínea, origen, horario, fechas, precio, disponibilidad) y `hoteles` (id, nombre, categoría, ubicación, fechas, precio, disponibilidad, servicios).
 
 ---
 
-## 🛡️ Resiliencia y Control de Contingencias
+## Buenas Prácticas y Manejo de Contingencias Implementadas
 
-1. **Prevención de fugas de memoria con `AbortController`:**
-   La consulta REST en `App.jsx` vincula un `controlador.signal` al método `fetch`. Al desmontar el componente o navegar a otra sección, se ejecuta `controlador.abort()`, impidiendo que peticiones fuera de tiempo intenten actualizar el estado de React.
-2. **Propagación dinámica de errores:**
-   El frontend extrae y muestra el mensaje real provisto por la respuesta HTTP o por el arreglo `errors` de GraphQL, sin recurrir a textos estáticos ni códigos genéricos.
-3. **Recuperación condicional:**
-   Si una consulta falla por contingencias de red o servidor (500), se ofrece un botón interactivo de **Reintentar** que reactiva la solicitud sin recargar la página completa. Si el identificador solicitado no existe en la base de datos, el sistema informa la no existencia y ofrece retornar al catálogo.
-
----
-
-## 📱 Responsividad (3 Cortes con Tailwind CSS)
-
-El diseño visual está estructurado con tres puntos de quiebre definidos en Tailwind CSS:
-
-* **Móvil (`< 640px`):** Menú de navegación en fila compacta, tarjetas a 1 columna (`grid-cols-1`) y fuentes ajustadas para interacción táctil.
-* **Tablet (`640px - 1024px`):** Catálogo dispuesto en 2 columnas (`md:grid-cols-2`), cabecera expandida y navegación lateral adaptable.
-* **Desktop (`> 1024px`):** Menú lateral estructurado de ancho fijo (`md:w-56`), catálogo en 3 columnas (`lg:grid-cols-3`) y contenedor centrado (`max-w-6xl`).
+1. **Consulta bajo demanda (sin descargas anticipadas en `Inicio`):**
+   La portada `/` (`Inicio.jsx`) no realiza peticiones al backend. La consulta REST (`GET /api/destinos`) se ejecuta exclusivamente cuando el usuario ingresa a la vista `/destinos` (`Destinos.jsx`), y la consulta GraphQL se ejecuta únicamente al acceder a `/destinos/:id` (`DetalleDestino.jsx`).
+2. **Flujo único con `AbortController`:**
+   En `Destinos.jsx`, tanto la carga inicial como las actualizaciones y simulaciones de error utilizan una única función memorizada (`cargarDestinos`) que gestiona un `AbortController` mediante `useRef`. Cualquier solicitud previa en vuelo se aborta antes de iniciar una nueva o al desmontar la vista, evitando condiciones de carrera.
+3. **Propagación dinámica de mensajes del backend:**
+   El frontend extrae y muestra el mensaje real devuelto en el cuerpo JSON del handler REST (`cuerpoError?.mensaje`) o en el arreglo `errors` de GraphQL (`error.message`), sin emplear mensajes fijos en duro.
+4. **Recuperación diferenciada según el tipo de fallo (404 vs. 500):**
+   Ante errores del servidor (`500`), fallos de red o errores simulados de GraphQL, se presenta la acción **Reintentar consulta** (conservando los datos previos en memoria si ya existían). En cambio, ante un recurso inexistente (`404` o identificador de destino no registrado), no se ofrece recargar un recurso que no existe, sino retornar al listado general.
+5. **Optimización de filtros con `useMemo`:**
+   Los países disponibles se obtienen dinámicamente de la respuesta del servicio simulado (sin arreglos fijos en el cliente), el término de búsqueda se normaliza una sola vez fuera del bucle de filtrado y se evita disparar actualizaciones al pulsar nuevamente el filtro ya activo.
 
 ---
 
-## 🚀 Instalación y Ejecución Local
+## Diseño Responsivo (3 Cortes con Tailwind CSS)
 
-### Prerrequisitos
-* Node.js v18 o superior.
-* Gestor de paquetes `npm`.
+* **Móvil (`< 640px`):** Navegación superior en fila adaptable, cuadrícula de destinos y opciones a 1 columna (`grid-cols-1`) y controles ajustados para pantallas pequeñas.
+* **Tablet (`640px - 1024px`):** Menú de navegación lateral (`md:flex-row`), catálogo y opciones de vuelos/hoteles en 2 columnas (`md:grid-cols-2`).
+* **Escritorio (`> 1024px`):** Contenedor centrado (`max-w-6xl`), barra lateral de ancho fijo (`md:w-60`) y catálogo de destinos en 3 columnas (`lg:grid-cols-3`).
+
+---
+
+## Instalación y Ejecución
+
+### Requisitos Previos
+* Node.js (versión 20.19+ o 22.12+ LTS recomendada).
+* npm.
 
 ### Comandos
 
@@ -143,21 +150,21 @@ El diseño visual está estructurado con tres puntos de quiebre definidos en Tai
 # 1. Clonar el repositorio
 git clone https://github.com/Lybern/viajes-carolina-delgado-PFY2202.git
 
-# 2. Entrar al directorio
+# 2. Ingresar al directorio del proyecto
 cd viajes-carolina-delgado-PFY2202
 
 # 3. Instalar dependencias
 npm install
 
-# 4. Iniciar servidor de desarrollo (puerto 5173 por defecto)
+# 4. Iniciar el entorno de desarrollo
 npm run dev
 
-# 5. Compilar para producción (genera bundle optimizado en /dist con fallback 404.html)
+# 5. Generar compilación de producción en /dist (con copia a 404.html para rutas SPA)
 npm run build
 
-# 6. Previsualizar la compilación de producción localmente
+# 6. Revisar localmente la compilación de producción
 npm run preview
 
-# 7. Publicar actualización en GitHub Pages
+# 7. Publicar en GitHub Pages
 npm run deploy
 ```
