@@ -19,7 +19,9 @@ export default function App() {
           <Link to="/" className="flex items-center gap-3.5 no-underline text-white group">
             <div className="w-11 h-11 bg-white/10 group-hover:bg-white/20 rounded-xl border border-white/20 shadow-sm flex items-center justify-center transition-all duration-200">
               <svg
-                className="w-6 h-6 text-blue-200"
+                width="24"
+                height="24"
+                className="w-6 h-6 text-blue-200 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="2"
