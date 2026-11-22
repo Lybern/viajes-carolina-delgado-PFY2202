@@ -1,4 +1,5 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { REST_DESTINOS_ENDPOINT } from '../graphql/endpoint';
 import Boton from '../components/atoms/Boton';
 import EstadoCarga from '../components/molecules/EstadoCarga';
 import AlertaError from '../components/molecules/AlertaError';
@@ -6,26 +7,121 @@ import BarraBusqueda from '../components/molecules/BarraBusqueda';
 import TarjetaDestino from '../components/molecules/TarjetaDestino';
 
 // ---------------------------------------------------------------------------
-// Página: Catálogo de Destinos (REST).
-// Ensambla los componentes de presentación (Átomos y Moléculas)
-// y recibe el estado y las funciones de control provistas por App.
+// Función auxiliar para consultar la API REST mock de destinos.
+// Propaga dinámicamente el mensaje real del backend mock y adjunta el código HTTP.
 // ---------------------------------------------------------------------------
-export default function Destinos({
-  destinos = [],
-  cargando,
-  error,
-  cargarDestinos,
-}) {
+async function solicitarDestinosRest(tipoError = '', signal) {
+  const url = tipoError
+    ? `${REST_DESTINOS_ENDPOINT}?error=${encodeURIComponent(tipoError)}`
+    : REST_DESTINOS_ENDPOINT;
+
+  try {
+    const respuesta = await fetch(url, { signal });
+
+    if (!respuesta.ok) {
+      const cuerpoError = await respuesta.json().catch(() => null);
+      const mensajeServidor =
+        cuerpoError?.mensaje ||
+        cuerpoError?.message ||
+        `Error inesperado del servidor REST (código ${respuesta.status}).`;
+
+      const errorHttp = new Error(mensajeServidor);
+      errorHttp.status = respuesta.status;
+      throw errorHttp;
+    }
+
+    return await respuesta.json();
+  } catch (err) {
+    if (err.name === 'AbortError') {
+      throw err;
+    }
+    if (err instanceof TypeError) {
+      const errorRed = new Error(
+        'No fue posible conectar con el servicio REST de destinos. Verifica tu conexión e intenta nuevamente.'
+      );
+      errorRed.status = 503;
+      throw errorRed;
+    }
+    throw err;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Página: Catálogo de Destinos (REST).
+// Consulta el catálogo únicamente cuando la vista se abre, unificando la carga
+// inicial y las recargas posteriores en un solo flujo con AbortController.
+// ---------------------------------------------------------------------------
+export default function Destinos() {
+  const [destinos, setDestinos] = useState([]);
+  const [cargando, setCargando] = useState(true);
+  const [error, setError] = useState('');
+  const [codigoError, setCodigoError] = useState(null);
   const [busqueda, setBusqueda] = useState('');
   const [paisSeleccionado, setPaisSeleccionado] = useState('Todos');
 
-  // Lista única de países para los filtros
+  // Referencia al AbortController vigente para cancelar peticiones anteriores superpuestas
+  const abortControllerRef = useRef(null);
+
+  // Flujo único para carga inicial, actualización y simulación de errores HTTP
+  const cargarDestinos = useCallback((tipoError = '') => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+
+    const controlador = new AbortController();
+    abortControllerRef.current = controlador;
+
+    setCargando(true);
+    setError('');
+    setCodigoError(null);
+
+    solicitarDestinosRest(tipoError, controlador.signal)
+      .then((datos) => {
+        setDestinos(datos);
+      })
+      .catch((err) => {
+        if (err.name === 'AbortError') {
+          return;
+        }
+        setError(err.message);
+        setCodigoError(err.status || 500);
+      })
+      .finally(() => {
+        if (!controlador.signal.aborted) {
+          setCargando(false);
+        }
+      });
+  }, []);
+
+  // Ejecuta la carga inicial al montar la vista y aborta si el usuario cambia de página
+  useEffect(() => {
+    cargarDestinos();
+
+    return () => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+    };
+  }, [cargarDestinos]);
+
+  // Evita consultas o actualizaciones redundantes si se vuelve a pulsar el mismo país activo
+  const manejarSeleccionPais = useCallback(
+    (nuevoPais) => {
+      if (nuevoPais === paisSeleccionado) {
+        return;
+      }
+      setPaisSeleccionado(nuevoPais);
+    },
+    [paisSeleccionado]
+  );
+
+  // Lista única de países extraída dinámicamente de los datos del servicio simulado
   const paisesDisponibles = useMemo(() => {
     const setPaises = new Set(destinos.map((d) => d.pais).filter(Boolean));
     return Array.from(setPaises);
   }, [destinos]);
 
-  // Filtrado reactivo de destinos por texto y país
+  // Normaliza el término una sola vez fuera del bucle y memoriza el resultado filtrado
   const destinosFiltrados = useMemo(() => {
     const termino = busqueda.trim().toLowerCase();
     return destinos.filter((destino) => {
@@ -34,6 +130,7 @@ export default function Destinos({
       const coincideTexto =
         !termino ||
         destino.nombre.toLowerCase().includes(termino) ||
+        destino.pais.toLowerCase().includes(termino) ||
         destino.actividades.toLowerCase().includes(termino);
 
       return coincidePais && coincideTexto;
@@ -41,84 +138,96 @@ export default function Destinos({
   }, [destinos, busqueda, paisSeleccionado]);
 
   return (
-    <section className="flex flex-col gap-5">
-      <div>
-        <h1 className="text-2xl font-extrabold text-slate-800 m-0 mb-1">
-          Destinos turísticos
-        </h1>
-        <p className="text-slate-500 text-sm m-0">
-          Los destinos se consultan mediante una petición al servicio REST.
-        </p>
-      </div>
+    <section className="flex flex-col gap-6">
+      {/* Encabezado de la sección REST */}
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <span className="inline-block bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full border border-blue-200 mb-2">
+            🌐 Servicio API REST Mock
+          </span>
+          <h1 className="text-2xl font-extrabold text-slate-900 m-0">
+            Catálogo de Destinos Turísticos
+          </h1>
+          <p className="text-slate-500 text-sm m-0 mt-1">
+            Explora los países y sus actividades populares antes de consultar vuelos y hoteles.
+          </p>
+        </div>
 
-      {/* Controles de prueba para simulación de respuestas */}
-      <div className="flex flex-wrap gap-2.5">
-        <Boton
-          onClick={() => cargarDestinos()}
-          disabled={cargando}
-          variant="secondary"
-        >
-          Actualizar destinos
-        </Boton>
+        {/* Controles de actualización y simulación de contingencias HTTP */}
+        <div className="flex flex-wrap items-center gap-2">
+          <Boton
+            onClick={() => cargarDestinos()}
+            disabled={cargando}
+            variant="secondary"
+          >
+            🔄 Actualizar
+          </Boton>
 
-        <Boton
-          onClick={() => cargarDestinos('404')}
-          disabled={cargando}
-          variant="simulation"
-        >
-          Simular error 404
-        </Boton>
+          <Boton
+            onClick={() => cargarDestinos('404')}
+            disabled={cargando}
+            variant="simulation"
+          >
+            Simular 404
+          </Boton>
 
-        <Boton
-          onClick={() => cargarDestinos('500')}
-          disabled={cargando}
-          variant="simulation"
-        >
-          Simular error 500
-        </Boton>
+          <Boton
+            onClick={() => cargarDestinos('500')}
+            disabled={cargando}
+            variant="simulation"
+          >
+            Simular 500
+          </Boton>
+        </div>
       </div>
 
       {/* Indicador de carga accesible */}
-      {cargando && <EstadoCarga mensaje="Cargando destinos..." />}
+      {cargando && (
+        <EstadoCarga mensaje="Consultando catálogo de destinos disponibles en el servicio REST..." />
+      )}
 
-      {/* Manejo de error con reintento */}
+      {/* Manejo de error propagando el mensaje real del backend mock.
+          Si es error 500 o de red ofrece "Reintentar"; si es 404 informa que el recurso no existe */}
       {error && (
         <AlertaError
           mensaje={error}
-          onReintentar={() => cargarDestinos()}
+          codigo={codigoError}
+          onReintentar={codigoError !== 404 ? () => cargarDestinos() : null}
+          onRestablecer={codigoError === 404 ? () => cargarDestinos() : null}
           disabledReintento={cargando}
         />
       )}
 
-      {/* Sin destinos registrados */}
-      {!cargando && !error && destinos.length === 0 && (
-        <p className="text-slate-500 italic p-4 bg-white rounded-lg border border-dashed border-slate-300">
-          No hay destinos disponibles por el momento.
-        </p>
+      {/* Aviso de resiliencia cuando ocurrió un error pero se conservan los datos previos en memoria */}
+      {!cargando && error && destinos.length > 0 && (
+        <div className="px-4 py-3 bg-amber-50 border-l-4 border-amber-500 rounded-lg text-amber-900 text-xs font-medium">
+          Mostrando en pantalla el último catálogo cargado en memoria mientras se restablece el servicio.
+        </div>
       )}
 
-      {/* Buscador y catálogo de destinos */}
-      {!cargando && !error && destinos.length > 0 && (
+      {/* Buscador y listado de tarjetas de destinos */}
+      {!cargando && destinos.length > 0 && (
         <>
           <BarraBusqueda
             busqueda={busqueda}
             onCambioBusqueda={setBusqueda}
             paises={paisesDisponibles}
             paisSeleccionado={paisSeleccionado}
-            onSeleccionarPais={setPaisSeleccionado}
+            onSeleccionarPais={manejarSeleccionPais}
+            totalResultados={destinosFiltrados.length}
           />
 
-          {/* Cuadrícula de tarjetas de destinos (3 cortes: móvil 1 col, tablet 2 cols, desktop 3 cols) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {destinosFiltrados.map((destino) => (
-              <TarjetaDestino key={destino.id} destino={destino} />
-            ))}
-          </div>
-
-          {destinosFiltrados.length === 0 && (
-            <div className="bg-white p-6 rounded-xl border border-slate-200 text-center">
-              <p className="text-slate-600 mb-3">
-                🔍 No se encontraron destinos para tu búsqueda.
+          {/* Cuadrícula de tarjetas en 3 cortes (móvil: 1 col, tablet: 2 cols, desktop: 3 cols) */}
+          {destinosFiltrados.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {destinosFiltrados.map((destino) => (
+                <TarjetaDestino key={destino.id} destino={destino} />
+              ))}
+            </div>
+          ) : (
+            <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center shadow-sm">
+              <p className="text-slate-600 font-medium mb-3">
+                🔍 No se encontraron destinos que coincidan con "{busqueda}" en la categoría seleccionada.
               </p>
               <Boton
                 variant="secondary"
@@ -127,11 +236,18 @@ export default function Destinos({
                   setPaisSeleccionado('Todos');
                 }}
               >
-                Limpiar filtros
+                Limpiar filtros de búsqueda
               </Boton>
             </div>
           )}
         </>
+      )}
+
+      {/* Estado vacío si el catálogo no tiene registros y no hay error */}
+      {!cargando && !error && destinos.length === 0 && (
+        <p className="text-slate-500 italic p-6 bg-white rounded-xl border border-dashed border-slate-300 text-center">
+          No hay destinos registrados en el catálogo actualmente.
+        </p>
       )}
     </section>
   );
