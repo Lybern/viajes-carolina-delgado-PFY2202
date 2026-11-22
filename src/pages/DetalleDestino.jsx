@@ -17,6 +17,8 @@ export default function DetalleDestino() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const simularError = searchParams.get('error') === 'graphql';
+  const mostrarControlesPrueba =
+    import.meta.env.DEV || searchParams.get('debug') === 'true' || simularError;
 
   const { data, loading, error, refetch } = useQuery(OBTENER_DETALLE_DESTINO, {
     variables: { id, simularError },
@@ -63,8 +65,8 @@ export default function DetalleDestino() {
             Volver a destinos
           </Link>
 
-          {/* Controles de simulación visibles solo en entorno de desarrollo o si ya está activo por URL */}
-          {(import.meta.env.DEV || simularError) && (
+          {/* Controles de simulación visibles en desarrollo o al activar ?debug=true en la URL */}
+          {mostrarControlesPrueba && (
             simularError ? (
               <Boton
                 variant="simulationActive"

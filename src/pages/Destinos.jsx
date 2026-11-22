@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useSearchParams } from 'react-router';
 import { REST_DESTINOS_ENDPOINT } from '../graphql/endpoint';
 import Boton from '../components/atoms/Boton';
 import EstadoCarga from '../components/molecules/EstadoCarga';
@@ -58,6 +59,9 @@ export default function Destinos() {
   const [codigoError, setCodigoError] = useState(null);
   const [busqueda, setBusqueda] = useState('');
   const [paisSeleccionado, setPaisSeleccionado] = useState('Todos');
+  const [searchParams] = useSearchParams();
+  const mostrarControlesPrueba =
+    import.meta.env.DEV || searchParams.get('debug') === 'true';
 
   // Referencia al AbortController vigente para cancelar peticiones anteriores superpuestas
   const abortControllerRef = useRef(null);
@@ -163,7 +167,7 @@ export default function Destinos() {
             Actualizar catálogo
           </Boton>
 
-          {import.meta.env.DEV && (
+          {mostrarControlesPrueba && (
             <>
               <Boton
                 onClick={() => cargarDestinos('404')}

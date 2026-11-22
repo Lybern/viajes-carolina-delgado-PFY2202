@@ -127,6 +127,10 @@ viajes-carolina-delgado-pfy2202/
    Ante errores del servidor (`500`), fallos de red o errores simulados de GraphQL, se presenta la acción **Reintentar consulta** (conservando los datos previos en memoria si ya existían). En cambio, ante un recurso inexistente (`404` o identificador de destino no registrado), no se ofrece recargar un recurso que no existe, sino retornar al listado general.
 5. **Optimización de filtros con `useMemo`:**
    Los países disponibles se obtienen dinámicamente de la respuesta del servicio simulado (sin arreglos fijos en el cliente), el término de búsqueda se normaliza una sola vez fuera del bucle de filtrado y se evita disparar actualizaciones al pulsar nuevamente el filtro ya activo.
+6. **Controles de simulación de errores reservados para desarrollo (`import.meta.env.DEV`):**
+   Para no exponer botones de prueba técnica a los usuarios finales en producción, los controles **Simular 404**, **Simular 500** (en `/destinos`) y **Simular error** (en `/destinos/:id`) están condicionados a `import.meta.env.DEV`:
+   * **En entorno de desarrollo (`npm run dev` en `http://localhost:5173`):** Los botones de simulación se muestran automáticamente en la cabecera de las vistas de catálogo y detalle.
+   * **En producción (GitHub Pages):** Permanecen ocultos por defecto para el usuario final, pero pueden habilitarse para revisión agregando el parámetro **`?debug=true`** a la URL (por ejemplo: `/destinos?debug=true` o `/destinos/Paris?debug=true`), o activando directamente `?error=graphql` en el detalle de un destino.
 
 ---
 
