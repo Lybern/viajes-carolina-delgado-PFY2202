@@ -7,7 +7,7 @@ import PaginaNoEncontrada from './pages/PaginaNoEncontrada';
 
 // ---------------------------------------------------------------------------
 // Componente principal: Define el Layout general y las rutas con react-router.
-// La consulta REST se delega a la vista Destinos para evitar descargas
+// La consulta de destinos se delega a la vista Destinos para evitar descargas
 // innecesarias al abrir la portada de Inicio.
 // ---------------------------------------------------------------------------
 export default function App() {
@@ -46,7 +46,7 @@ export default function App() {
           <div className="hidden sm:flex items-center gap-2">
             <span className="inline-flex items-center gap-2 bg-blue-900/60 border border-blue-400/30 text-blue-100 text-xs font-semibold px-3 py-1.5 rounded-full">
               <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
-              REST + GraphQL Mock
+              Temporada 2026 - 2027 Disponible
             </span>
           </div>
         </div>
@@ -94,13 +94,13 @@ export default function App() {
             </li>
           </ul>
 
-          {/* Tarjeta informativa lateral en pantallas medianas y grandes */}
+          {/* Guía de viaje para el usuario en pantallas medianas y grandes */}
           <div className="hidden md:block mt-6 pt-4 border-t border-slate-100">
             <p className="text-xs font-bold text-slate-700 m-0 mb-1">
-              Arquitectura Híbrida
+              Asesoría al Viajero
             </p>
             <p className="text-xs text-slate-500 leading-relaxed m-0">
-              El listado de destinos se obtiene vía <strong>REST</strong> y los vuelos y hoteles detallados mediante <strong>GraphQL</strong>.
+              Selecciona un destino de nuestro catálogo para revisar itinerarios aéreos, tarifas por noche y disponibilidad actualizada.
             </p>
           </div>
         </nav>
@@ -111,10 +111,10 @@ export default function App() {
             {/* Portada institucional */}
             <Route path="/" element={<Inicio />} />
 
-            {/* Catálogo REST de destinos (consulta los datos únicamente al montar esta vista) */}
+            {/* Catálogo de destinos (consulta los datos únicamente al montar esta vista) */}
             <Route path="/destinos" element={<Destinos />} />
 
-            {/* Detalle GraphQL del destino seleccionado */}
+            {/* Detalle de vuelos y hoteles del destino seleccionado */}
             <Route path="/destinos/:id" element={<DetalleDestino />} />
             <Route path="/destino/:id" element={<DetalleDestino />} />
 
@@ -131,7 +131,7 @@ export default function App() {
             Agencia de Viajes Global — Planificación de Vuelos y Hoteles
           </p>
           <p className="m-0">
-            © 2026 Carolina Delgado · Desarrollo Frontend II (PFY2202)
+            © 2026 Agencia de Viajes Global · Todos los derechos reservados
           </p>
         </div>
       </footer>

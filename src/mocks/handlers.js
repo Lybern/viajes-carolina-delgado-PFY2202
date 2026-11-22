@@ -349,7 +349,7 @@ const manejarRestDestinos = async ({ request }) => {
     return HttpResponse.json(
       {
         mensaje:
-          'No se encontró el catálogo de destinos solicitado en el servidor REST (404).',
+          'No se encontró el catálogo de destinos solicitado (404).',
       },
       { status: 404 }
     );
@@ -359,7 +359,7 @@ const manejarRestDestinos = async ({ request }) => {
     return HttpResponse.json(
       {
         mensaje:
-          'El servidor REST experimentó un fallo interno al procesar el catálogo de destinos (500).',
+          'El servidor experimentó un fallo interno al procesar el catálogo de destinos (500).',
       },
       { status: 500 }
     );
@@ -390,7 +390,7 @@ export const handlers = [
         errors: [
           {
             message:
-              'No fue posible obtener los vuelos y hoteles del destino desde el servicio GraphQL.',
+              'No fue posible obtener los vuelos y hoteles del destino seleccionado.',
             extensions: { code: 'ERROR_SIMULADO' },
           },
         ],

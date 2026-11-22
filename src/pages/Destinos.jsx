@@ -23,7 +23,7 @@ async function solicitarDestinosRest(tipoError = '', signal) {
       const mensajeServidor =
         cuerpoError?.mensaje ||
         cuerpoError?.message ||
-        `Error inesperado del servidor REST (código ${respuesta.status}).`;
+        `Error inesperado del servidor (código ${respuesta.status}).`;
 
       const errorHttp = new Error(mensajeServidor);
       errorHttp.status = respuesta.status;
@@ -37,7 +37,7 @@ async function solicitarDestinosRest(tipoError = '', signal) {
     }
     if (err instanceof TypeError) {
       const errorRed = new Error(
-        'No fue posible conectar con el servicio REST de destinos. Verifica tu conexión e intenta nuevamente.'
+        'No fue posible conectar con el servidor de destinos. Verifica tu conexión e intenta nuevamente.'
       );
       errorRed.status = 503;
       throw errorRed;
@@ -139,51 +139,55 @@ export default function Destinos() {
 
   return (
     <section className="flex flex-col gap-6">
-      {/* Encabezado de la sección REST */}
+      {/* Encabezado del catálogo de destinos */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <span className="inline-block bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-blue-200 mb-2">
-            Servicio API REST Mock
+            Catálogo Internacional
           </span>
           <h1 className="text-2xl font-extrabold text-slate-900 m-0">
-            Catálogo de Destinos Turísticos
+            Destinos Turísticos Disponibles
           </h1>
           <p className="text-slate-500 text-sm m-0 mt-1">
-            Explora los países y sus actividades populares antes de consultar vuelos y hoteles.
+            Explora cada país y sus actividades populares antes de revisar vuelos y hoteles.
           </p>
         </div>
 
-        {/* Controles de actualización y simulación de contingencias HTTP */}
+        {/* Controles de actualización; los botones de simulación de error solo se muestran en desarrollo */}
         <div className="flex flex-wrap items-center gap-2">
           <Boton
             onClick={() => cargarDestinos()}
             disabled={cargando}
             variant="secondary"
           >
-            Actualizar
+            Actualizar catálogo
           </Boton>
 
-          <Boton
-            onClick={() => cargarDestinos('404')}
-            disabled={cargando}
-            variant="simulation"
-          >
-            Simular 404
-          </Boton>
+          {import.meta.env.DEV && (
+            <>
+              <Boton
+                onClick={() => cargarDestinos('404')}
+                disabled={cargando}
+                variant="simulation"
+              >
+                Simular 404
+              </Boton>
 
-          <Boton
-            onClick={() => cargarDestinos('500')}
-            disabled={cargando}
-            variant="simulation"
-          >
-            Simular 500
-          </Boton>
+              <Boton
+                onClick={() => cargarDestinos('500')}
+                disabled={cargando}
+                variant="simulation"
+              >
+                Simular 500
+              </Boton>
+            </>
+          )}
         </div>
       </div>
 
       {/* Indicador de carga accesible */}
       {cargando && (
-        <EstadoCarga mensaje="Consultando catálogo de destinos disponibles en el servicio REST..." />
+        <EstadoCarga mensaje="Cargando catálogo de destinos disponibles..." />
       )}
 
       {/* Manejo de error propagando el mensaje real del backend mock */}
@@ -200,7 +204,7 @@ export default function Destinos() {
       {/* Aviso de resiliencia cuando ocurrió un error pero se conservan los datos previos en memoria */}
       {!cargando && error && destinos.length > 0 && (
         <div className="px-4 py-3 bg-amber-50 border-l-4 border-amber-500 rounded-lg text-amber-900 text-xs font-medium">
-          Mostrando en pantalla el último catálogo cargado en memoria mientras se restablece el servicio.
+          Mostrando en pantalla el último catálogo cargado en memoria mientras se restablece la conexión.
         </div>
       )}
 

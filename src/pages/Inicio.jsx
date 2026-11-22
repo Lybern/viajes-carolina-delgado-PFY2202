@@ -2,9 +2,9 @@ import React from 'react';
 import { Link } from 'react-router';
 
 // ---------------------------------------------------------------------------
-// Página: Portada institucional y bienvenida.
-// No realiza descargas anticipadas del catálogo; presenta la arquitectura
-// y guía al usuario hacia la exploración de destinos.
+// Página: Portada institucional y bienvenida para el usuario final.
+// No realiza descargas anticipadas del catálogo; presenta los servicios
+// de la agencia de viajes y guía al usuario hacia el catálogo de destinos.
 // ---------------------------------------------------------------------------
 export default function Inicio() {
   return (
@@ -20,8 +20,8 @@ export default function Inicio() {
           </h2>
           <p className="text-blue-100/90 text-sm sm:text-base leading-relaxed m-0 mb-6">
             Explora nuestro catálogo mundial de destinos turísticos, conoce sus
-            actividades más emblemáticas y consulta en tiempo real la
-            disponibilidad de vuelos y alojamientos para armar tu itinerario ideal.
+            actividades más emblemáticas y consulta la disponibilidad de vuelos
+            y alojamientos para armar tu itinerario ideal.
           </p>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -33,48 +33,48 @@ export default function Inicio() {
             </Link>
           </div>
 
-          {/* Indicadores rápidos */}
+          {/* Indicadores de la agencia orientados al viajero */}
           <div className="grid grid-cols-3 gap-4 mt-8 pt-6 border-t border-white/15">
             <div>
               <span className="block text-xl sm:text-2xl font-black text-amber-300">
                 5+
               </span>
               <span className="text-xs text-blue-200">
-                Destinos globales
+                Destinos internacionales
               </span>
             </div>
             <div>
               <span className="block text-xl sm:text-2xl font-black text-emerald-300">
-                REST
+                10+
               </span>
               <span className="text-xs text-blue-200">
-                Catálogo de países
+                Rutas aéreas disponibles
               </span>
             </div>
             <div>
               <span className="block text-xl sm:text-2xl font-black text-sky-300">
-                GraphQL
+                100%
               </span>
               <span className="text-xs text-blue-200">
-                Vuelos y hoteles
+                Hoteles seleccionados
               </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Grid de características en 3 cortes (1 col móvil, 2 cols tablet, 3 cols desktop) */}
+      {/* Grid de beneficios/pasos de planificación en 3 cortes (1 col móvil, 2 cols tablet, 3 cols desktop) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
           <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 font-black text-sm flex items-center justify-center mb-4">
             01
           </div>
           <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">
-            Explora Destinos (API REST)
+            Destinos y Experiencias
           </h3>
           <p className="text-sm text-slate-600 leading-relaxed m-0">
-            Consulta el listado de destinos disponibles junto con su país, mejor
-            temporada de viaje y sus actividades turísticas más populares.
+            Conoce ciudades emblemáticas de Europa, Asia y América, su mejor
+            temporada climática y las actividades imperdibles en cada país.
           </p>
         </div>
 
@@ -83,11 +83,11 @@ export default function Inicio() {
             02
           </div>
           <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">
-            Consulta Itinerarios (GraphQL)
+            Vuelos e Itinerarios
           </h3>
           <p className="text-sm text-slate-600 leading-relaxed m-0">
-            Al seleccionar un destino, Apollo Client recupera exactamente los
-            campos requeridos de vuelos, tarifas por noche, fechas y cupos disponibles.
+            Compara aerolíneas internacionales, rutas desde Santiago, horarios de
+            salida, fechas programadas y cupos de asientos disponibles.
           </p>
         </div>
 
@@ -96,11 +96,11 @@ export default function Inicio() {
             03
           </div>
           <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">
-            Resiliencia y Contingencias
+            Alojamientos Exclusivos
           </h3>
           <p className="text-sm text-slate-600 leading-relaxed m-0">
-            Integración con Mock Service Worker (MSW), cancelación limpia con
-            AbortController y propagación dinámica de errores reales del servidor.
+            Revisa opciones de hospedaje categorizadas por estrellas, ubicación
+            estratégica, servicios incluidos y disponibilidad de habitaciones.
           </p>
         </div>
       </div>

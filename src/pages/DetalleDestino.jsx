@@ -41,17 +41,17 @@ export default function DetalleDestino() {
 
   return (
     <section className="flex flex-col gap-6">
-      {/* Barra superior de navegación y control de pruebas GraphQL */}
+      {/* Barra superior de navegación */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div>
           <span className="inline-block bg-indigo-50 text-indigo-700 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-indigo-200 mb-1.5">
-            Consulta Apollo GraphQL
+            Itinerario y Estadía
           </span>
           <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 m-0">
             Planificación de Vuelos y Hoteles
           </h1>
           <p className="text-slate-500 text-xs sm:text-sm m-0 mt-0.5">
-            El catálogo se obtuvo mediante REST. Este itinerario detallado se consulta mediante GraphQL.
+            Revisa las opciones de transporte aéreo y alojamiento disponibles para tu viaje.
           </p>
         </div>
 
@@ -63,30 +63,33 @@ export default function DetalleDestino() {
             Volver a destinos
           </Link>
 
-          {simularError ? (
-            <Boton
-              variant="simulationActive"
-              onClick={() => setSearchParams({})}
-            >
-              Desactivar error GraphQL
-            </Boton>
-          ) : (
-            <Boton
-              variant="simulation"
-              onClick={() => setSearchParams({ error: 'graphql' })}
-            >
-              Simular error GraphQL
-            </Boton>
+          {/* Controles de simulación visibles solo en entorno de desarrollo o si ya está activo por URL */}
+          {(import.meta.env.DEV || simularError) && (
+            simularError ? (
+              <Boton
+                variant="simulationActive"
+                onClick={() => setSearchParams({})}
+              >
+                Restaurar consulta
+              </Boton>
+            ) : (
+              <Boton
+                variant="simulation"
+                onClick={() => setSearchParams({ error: 'graphql' })}
+              >
+                Simular error
+              </Boton>
+            )
           )}
         </div>
       </div>
 
       {/* Estado de carga accesible */}
       {loading && (
-        <EstadoCarga mensaje={`Consultando vuelos y hoteles disponibles para ${id} vía GraphQL...`} />
+        <EstadoCarga mensaje={`Consultando vuelos y hoteles disponibles para ${id}...`} />
       )}
 
-      {/* Manejo de error de GraphQL propagando el message enviado en el arreglo errors */}
+      {/* Manejo de error propagando el message enviado desde el backend */}
       {error && (
         <AlertaError
           mensaje={error.message}
@@ -106,7 +109,7 @@ export default function DetalleDestino() {
             Destino "{id}" no registrado en el catálogo
           </h2>
           <p className="m-0 mb-4 text-amber-800">
-            No existen vuelos ni hoteles asociados al identificador solicitado. Como el destino no existe, selecciona uno válido desde el catálogo principal.
+            No existen vuelos ni hoteles asociados al identificador solicitado. Selecciona un destino válido desde nuestro catálogo principal.
           </p>
           <Link
             to="/destinos"
@@ -172,7 +175,7 @@ export default function DetalleDestino() {
             </div>
           </div>
 
-          {/* Sección de vuelos (GraphQL) */}
+          {/* Sección de vuelos */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-extrabold text-slate-800 m-0">
@@ -196,7 +199,7 @@ export default function DetalleDestino() {
             )}
           </div>
 
-          {/* Sección de hoteles (GraphQL) */}
+          {/* Sección de hoteles */}
           <div>
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-extrabold text-slate-800 m-0">
