@@ -4,4 +4,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ command }) => ({
   plugins: [react()],
   base: command === 'build' ? '/viajes-carolina-delgado-PFY2202/' : '/',
+  build: {
+    chunkSizeWarningLimit: 800,
+  },
 }));

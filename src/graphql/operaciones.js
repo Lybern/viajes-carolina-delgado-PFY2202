@@ -10,17 +10,28 @@ export const OBTENER_DETALLE_DESTINO = gql`
       id
       nombre
       pais
+      descripcion
+      temporada
+      imagen
+      actividades
       vuelos {
+        id
         aerolinea
+        origen
+        horario
         fechas
         precio
         disponibilidad
       }
       hoteles {
+        id
         nombre
+        categoria
+        ubicacion
         fechas
         precio
         disponibilidad
+        servicios
       }
     }
   }

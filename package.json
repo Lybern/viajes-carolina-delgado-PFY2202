@@ -5,10 +5,6 @@
   "type": "module",
   "dependencies": {
     "@apollo/client": "^4.3.8",
-    "@testing-library/dom": "^10.4.2",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^13.5.0",
     "graphql": "^16.15.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -16,21 +12,9 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && node -e \"require('fs').copyFileSync('dist/index.html', 'dist/404.html')\"",
+    "build": "vite build && node -e \"import('node:fs').then(fs => fs.copyFileSync('dist/index.html', 'dist/404.html'))\"",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.3.0",
