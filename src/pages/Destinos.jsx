@@ -142,8 +142,8 @@ export default function Destinos() {
       {/* Encabezado de la sección REST */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <span className="inline-block bg-blue-50 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full border border-blue-200 mb-2">
-            🌐 Servicio API REST Mock
+          <span className="inline-block bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-blue-200 mb-2">
+            Servicio API REST Mock
           </span>
           <h1 className="text-2xl font-extrabold text-slate-900 m-0">
             Catálogo de Destinos Turísticos
@@ -160,7 +160,7 @@ export default function Destinos() {
             disabled={cargando}
             variant="secondary"
           >
-            🔄 Actualizar
+            Actualizar
           </Boton>
 
           <Boton
@@ -186,8 +186,7 @@ export default function Destinos() {
         <EstadoCarga mensaje="Consultando catálogo de destinos disponibles en el servicio REST..." />
       )}
 
-      {/* Manejo de error propagando el mensaje real del backend mock.
-          Si es error 500 o de red ofrece "Reintentar"; si es 404 informa que el recurso no existe */}
+      {/* Manejo de error propagando el mensaje real del backend mock */}
       {error && (
         <AlertaError
           mensaje={error}
@@ -227,7 +226,7 @@ export default function Destinos() {
           ) : (
             <div className="bg-white p-8 rounded-2xl border border-slate-200 text-center shadow-sm">
               <p className="text-slate-600 font-medium mb-3">
-                🔍 No se encontraron destinos que coincidan con "{busqueda}" en la categoría seleccionada.
+                No se encontraron destinos que coincidan con "{busqueda}" en la categoría seleccionada.
               </p>
               <Boton
                 variant="secondary"

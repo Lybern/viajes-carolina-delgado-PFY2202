@@ -6,7 +6,7 @@ import { Link } from 'react-router';
 // ---------------------------------------------------------------------------
 export default function PaginaNoEncontrada() {
   return (
-    <section className="bg-white p-12 rounded-2xl border border-slate-200 text-center shadow-xs">
+    <section className="bg-white p-12 rounded-2xl border border-slate-200 text-center shadow-sm">
       <span className="text-6xl font-black text-blue-600 block mb-3">
         404
       </span>
@@ -20,15 +20,15 @@ export default function PaginaNoEncontrada() {
       <div className="flex items-center justify-center gap-3 flex-wrap">
         <Link
           to="/"
-          className="inline-flex items-center justify-center font-semibold rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-4 py-2 text-sm transition-all duration-200"
+          className="inline-flex items-center justify-center font-semibold rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-4 py-2 text-sm transition-all duration-200 no-underline shadow-sm"
         >
-          🏠 Ir al Inicio
+          Ir al Inicio
         </Link>
         <Link
           to="/destinos"
-          className="inline-flex items-center justify-center font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm transition-all duration-200 shadow-xs"
+          className="inline-flex items-center justify-center font-semibold rounded-lg bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm transition-all duration-200 shadow-sm no-underline"
         >
-          📍 Ver Catálogo de Destinos
+          Ver Catálogo de Destinos
         </Link>
       </div>
     </section>

@@ -11,14 +11,15 @@ export default function BarraBusqueda({
   paises = [],
   paisSeleccionado = 'Todos',
   onSeleccionarPais,
+  totalResultados = null,
 }) {
   return (
-    <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col gap-3">
+    <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col gap-3.5">
       {/* Input de búsqueda */}
       <div className="relative flex items-center">
         <CampoTexto
           type="search"
-          placeholder="🔍 Buscar por nombre o actividad (ej. Louvre, playa, templo)..."
+          placeholder="Buscar destino por ciudad, país o actividad (ej. Louvre, cenotes, Machu Picchu)..."
           value={busqueda}
           onChange={(e) => onCambioBusqueda(e.target.value)}
           ariaLabel="Buscar destinos por texto"
@@ -27,35 +28,46 @@ export default function BarraBusqueda({
           <button
             type="button"
             onClick={() => onCambioBusqueda('')}
-            className="absolute right-3 text-slate-400 hover:text-slate-600 text-sm cursor-pointer p-1"
+            className="absolute right-3 text-slate-400 hover:text-slate-600 text-xs font-bold cursor-pointer px-2 py-1"
             aria-label="Limpiar campo de búsqueda"
           >
-            ✕
+            Limpiar
           </button>
         )}
       </div>
 
-      {/* Filtros rápidos por país */}
-      {paises.length > 0 && (
-        <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-semibold text-slate-500 mr-1">País:</span>
-          <Boton
-            variant={paisSeleccionado === 'Todos' ? 'chipActive' : 'chip'}
-            onClick={() => onSeleccionarPais('Todos')}
-          >
-            Todos
-          </Boton>
-          {paises.map((pais) => (
+      {/* Filtros rápidos por país y contador de resultados */}
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        {paises.length > 0 && (
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mr-1">
+              Filtrar por país:
+            </span>
             <Boton
-              key={pais}
-              variant={paisSeleccionado === pais ? 'chipActive' : 'chip'}
-              onClick={() => onSeleccionarPais(pais)}
+              variant={paisSeleccionado === 'Todos' ? 'chipActive' : 'chip'}
+              onClick={() => onSeleccionarPais('Todos')}
             >
-              {pais}
+              Todos
             </Boton>
-          ))}
-        </div>
-      )}
+            {paises.map((pais) => (
+              <Boton
+                key={pais}
+                variant={paisSeleccionado === pais ? 'chipActive' : 'chip'}
+                onClick={() => onSeleccionarPais(pais)}
+              >
+                {pais}
+              </Boton>
+            ))}
+          </div>
+        )}
+
+        {totalResultados !== null && (
+          <span className="text-xs font-semibold text-slate-500">
+            Mostrando {totalResultados}{' '}
+            {totalResultados === 1 ? 'destino' : 'destinos'}
+          </span>
+        )}
+      </div>
     </div>
   );
 }

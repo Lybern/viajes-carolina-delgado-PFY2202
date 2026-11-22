@@ -17,9 +17,22 @@ export default function App() {
       <header className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-800 text-white shadow-md border-b border-blue-900/40">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between flex-wrap gap-4">
           <Link to="/" className="flex items-center gap-3.5 no-underline text-white group">
-            <span className="text-3xl bg-white/10 group-hover:bg-white/20 p-2.5 rounded-xl border border-white/20 shadow-sm transition-all duration-200">
-              ✈️
-            </span>
+            <div className="w-11 h-11 bg-white/10 group-hover:bg-white/20 rounded-xl border border-white/20 shadow-sm flex items-center justify-center transition-all duration-200">
+              <svg
+                className="w-6 h-6 text-blue-200"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                />
+              </svg>
+            </div>
             <div>
               <h1 className="text-xl sm:text-2xl font-black m-0 tracking-tight">
                 Agencia de Viajes Global
@@ -31,9 +44,9 @@ export default function App() {
           </Link>
 
           <div className="hidden sm:flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 bg-blue-900/60 border border-blue-400/30 text-blue-100 text-xs font-semibold px-3 py-1.5 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-              REST + GraphQL Mock Activo
+            <span className="inline-flex items-center gap-2 bg-blue-900/60 border border-blue-400/30 text-blue-100 text-xs font-semibold px-3 py-1.5 rounded-full">
+              <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+              REST + GraphQL Mock
             </span>
           </div>
         </div>
@@ -62,7 +75,6 @@ export default function App() {
                   }`
                 }
               >
-                <span>🏠</span>
                 <span>Inicio</span>
               </NavLink>
             </li>
@@ -77,7 +89,6 @@ export default function App() {
                   }`
                 }
               >
-                <span>🌍</span>
                 <span>Destinos</span>
               </NavLink>
             </li>
@@ -86,7 +97,7 @@ export default function App() {
           {/* Tarjeta informativa lateral en pantallas medianas y grandes */}
           <div className="hidden md:block mt-6 pt-4 border-t border-slate-100">
             <p className="text-xs font-bold text-slate-700 m-0 mb-1">
-              💡 Arquitectura Híbrida
+              Arquitectura Híbrida
             </p>
             <p className="text-xs text-slate-500 leading-relaxed m-0">
               El listado de destinos se obtiene vía <strong>REST</strong> y los vuelos y hoteles detallados mediante <strong>GraphQL</strong>.
@@ -117,7 +128,7 @@ export default function App() {
       <footer className="text-center py-6 bg-white border-t border-slate-200 text-slate-500 text-xs mt-auto">
         <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="m-0 font-medium text-slate-600">
-            ✈️ Agencia de Viajes Global — Planificación de Vuelos y Hoteles
+            Agencia de Viajes Global — Planificación de Vuelos y Hoteles
           </p>
           <p className="m-0">
             © 2026 Carolina Delgado · Desarrollo Frontend II (PFY2202)
