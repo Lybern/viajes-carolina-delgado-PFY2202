@@ -16,7 +16,8 @@ function calcularRetraso(clave, msInicial = 450, msRepetida = 150) {
 }
 
 // ---------------------------------------------------------------------------
-// Datos simulados de Destinos para la API REST
+// Fuente única de datos base de Destinos (compartida entre REST y GraphQL
+// para evitar duplicidad de metadatos como país, descripción o actividades)
 // ---------------------------------------------------------------------------
 const destinos = [
   {
@@ -34,7 +35,7 @@ const destinos = [
     nombre: 'Tokio',
     pais: 'Japón',
     descripcion: 'Metrópolis fascinante donde conviven santuarios milenarios, jardines imperiales y distritos tecnológicos.',
-    temporada: 'Marzo a mayo (erezos) y octubre a noviembre',
+    temporada: 'Marzo a mayo (cerezos) y octubre a noviembre',
     precioDesde: '$1.490 USD',
     imagen: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=900&q=80',
     actividades: 'Templo Senso-ji, Cruce de Shibuya, Excursión al Monte Fuji, Gastronomía en Shinjuku',
@@ -72,17 +73,10 @@ const destinos = [
 ];
 
 // ---------------------------------------------------------------------------
-// Opciones detalladas de Vuelos y Hoteles por cada destino para GraphQL
+// Opciones detalladas de Vuelos y Hoteles por destino para GraphQL
 // ---------------------------------------------------------------------------
-const detallesPorDestino = {
+const itinerariosPorDestino = {
   Paris: {
-    id: 'Paris',
-    nombre: 'París',
-    pais: 'Francia',
-    descripcion: 'La Ciudad de la Luz cautiva con su arquitectura histórica, museos de clase mundial y paseos junto al río Sena.',
-    temporada: 'Abril a octubre (Primavera - Otoño)',
-    imagen: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?auto=format&fit=crop&w=900&q=80',
-    actividades: 'Torre Eiffel, Museo del Louvre, Crucero por el Sena, Barrio de Montmartre',
     vuelos: [
       {
         id: 'AF-401',
@@ -127,13 +121,6 @@ const detallesPorDestino = {
     ],
   },
   Tokio: {
-    id: 'Tokio',
-    nombre: 'Tokio',
-    pais: 'Japón',
-    descripcion: 'Metrópolis fascinante donde conviven santuarios milenarios, jardines imperiales y distritos tecnológicos.',
-    temporada: 'Marzo a mayo (erezos) y octubre a noviembre',
-    imagen: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&w=900&q=80',
-    actividades: 'Templo Senso-ji, Cruce de Shibuya, Excursión al Monte Fuji, Gastronomía en Shinjuku',
     vuelos: [
       {
         id: 'NH-204',
@@ -178,13 +165,6 @@ const detallesPorDestino = {
     ],
   },
   Cancun: {
-    id: 'Cancun',
-    nombre: 'Cancún',
-    pais: 'México',
-    descripcion: 'Paraíso del Caribe mexicano con playas de arena blanca, aguas turquesas, arrecifes coralinos y cultura maya.',
-    temporada: 'Noviembre a mayo (Clima tropical seco)',
-    imagen: 'https://images.unsplash.com/photo-1510097467424-192d713fd8b2?auto=format&fit=crop&w=900&q=80',
-    actividades: 'Chichén Itzá, Snorkel en arrecifes, Nado en cenotes sagrados, Isla Mujeres',
     vuelos: [
       {
         id: 'LA-620',
@@ -229,13 +209,6 @@ const detallesPorDestino = {
     ],
   },
   Cusco: {
-    id: 'Cusco',
-    nombre: 'Cusco',
-    pais: 'Perú',
-    descripcion: 'Antigua capital del Imperio Inca en el corazón de los Andes, puerta de entrada al Valle Sagrado y Machu Picchu.',
-    temporada: 'Abril a octubre (Temporada seca andina)',
-    imagen: 'https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&w=900&q=80',
-    actividades: 'Ciudadela de Machu Picchu, Valle Sagrado, Plaza de Armas, Fortaleza de Sacsayhuamán',
     vuelos: [
       {
         id: 'LA-2364',
@@ -280,13 +253,6 @@ const detallesPorDestino = {
     ],
   },
   Roma: {
-    id: 'Roma',
-    nombre: 'Roma',
-    pais: 'Italia',
-    descripcion: 'La Ciudad Eterna ofrece más de dos milenios de arte, plazas barrocas, ruinas imperiales y gastronomía mediterránea.',
-    temporada: 'Abril a junio y septiembre a octubre',
-    imagen: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=900&q=80',
-    actividades: 'Coliseo Romano, Fontana di Trevi, Museos Vaticanos, Piazza Navona',
     vuelos: [
       {
         id: 'AZ-689',
@@ -397,15 +363,19 @@ export const handlers = [
       });
     }
 
-    // Búsqueda de destino por ID (insensible a mayúsculas)
-    const clave = Object.keys(detallesPorDestino).find(
-      (k) => k.toLowerCase() === (destinoId || '').toLowerCase()
+    // Búsqueda de destino base por ID (insensible a mayúsculas) y unión con sus vuelos y hoteles
+    const destinoBase = destinos.find(
+      (d) => d.id.toLowerCase() === (destinoId || '').toLowerCase()
     );
-    const detalle = detallesPorDestino[clave] || detallesPorDestino[destinoId];
+    const itinerario = destinoBase ? itinerariosPorDestino[destinoBase.id] : null;
+    const detalle =
+      destinoBase && itinerario
+        ? { ...destinoBase, ...itinerario }
+        : null;
 
     return HttpResponse.json({
       data: {
-        destino: detalle ?? null,
+        destino: detalle,
       },
     });
   }),

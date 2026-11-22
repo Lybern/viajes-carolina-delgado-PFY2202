@@ -17,8 +17,10 @@ export default function DetalleDestino() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const simularError = searchParams.get('error') === 'graphql';
+  const modoDebug = searchParams.get('debug') === 'true';
   const mostrarControlesPrueba =
-    import.meta.env.DEV || searchParams.get('debug') === 'true' || simularError;
+    import.meta.env.DEV || modoDebug || simularError;
+  const rutaCatalogo = modoDebug ? '/destinos?debug=true' : '/destinos';
 
   const { data, loading, error, refetch } = useQuery(OBTENER_DETALLE_DESTINO, {
     variables: { id, simularError },
@@ -32,10 +34,20 @@ export default function DetalleDestino() {
     ? destino.actividades.split(',').map((a) => a.trim()).filter(Boolean)
     : [];
 
+  const activarSimulacionError = () => {
+    setSearchParams(
+      modoDebug ? { debug: 'true', error: 'graphql' } : { error: 'graphql' }
+    );
+  };
+
+  const limpiarSimulacionError = () => {
+    setSearchParams(modoDebug ? { debug: 'true' } : {});
+  };
+
   // Permite reintentar limpiando la simulación de error o reejecutando refetch()
   const manejarReintentoGraphql = () => {
     if (simularError) {
-      setSearchParams({});
+      limpiarSimulacionError();
     } else {
       refetch();
     }
@@ -59,7 +71,7 @@ export default function DetalleDestino() {
 
         <div className="flex flex-wrap items-center gap-2.5">
           <Link
-            to="/destinos"
+            to={rutaCatalogo}
             className="inline-flex items-center justify-center font-semibold rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3.5 py-2 text-xs sm:text-sm transition-all duration-200 no-underline"
           >
             Volver a destinos
@@ -70,14 +82,14 @@ export default function DetalleDestino() {
             simularError ? (
               <Boton
                 variant="simulationActive"
-                onClick={() => setSearchParams({})}
+                onClick={limpiarSimulacionError}
               >
                 Restaurar consulta
               </Boton>
             ) : (
               <Boton
                 variant="simulation"
-                onClick={() => setSearchParams({ error: 'graphql' })}
+                onClick={activarSimulacionError}
               >
                 Simular error
               </Boton>

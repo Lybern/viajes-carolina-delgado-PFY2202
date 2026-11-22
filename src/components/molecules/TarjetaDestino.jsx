@@ -6,8 +6,12 @@ import { Link } from 'react-router';
 // Muestra imagen panorámica, país, temporada, chips de actividades populares
 // y enlace hacia la consulta detallada GraphQL.
 // ---------------------------------------------------------------------------
-export default function TarjetaDestino({ destino }) {
+export default function TarjetaDestino({ destino, modoDebug = false }) {
   if (!destino) return null;
+
+  const rutaDetalle = modoDebug
+    ? `/destinos/${destino.id}?debug=true`
+    : `/destinos/${destino.id}`;
 
   const listaActividades = destino.actividades
     ? destino.actividades.split(',').map((a) => a.trim()).filter(Boolean)
@@ -82,7 +86,7 @@ export default function TarjetaDestino({ destino }) {
       {/* Acción hacia la vista detallada de GraphQL */}
       <div className="p-5 pt-3">
         <Link
-          to={`/destinos/${destino.id}`}
+          to={rutaDetalle}
           className="w-full inline-flex items-center justify-center font-bold rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 hover:border-blue-600 px-4 py-2.5 text-sm transition-all duration-200 text-center no-underline"
         >
           Ver vuelos y hoteles

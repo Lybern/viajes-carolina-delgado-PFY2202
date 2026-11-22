@@ -60,8 +60,8 @@ export default function Destinos() {
   const [busqueda, setBusqueda] = useState('');
   const [paisSeleccionado, setPaisSeleccionado] = useState('Todos');
   const [searchParams] = useSearchParams();
-  const mostrarControlesPrueba =
-    import.meta.env.DEV || searchParams.get('debug') === 'true';
+  const modoDebug = searchParams.get('debug') === 'true';
+  const mostrarControlesPrueba = import.meta.env.DEV || modoDebug;
 
   // Referencia al AbortController vigente para cancelar peticiones anteriores superpuestas
   const abortControllerRef = useRef(null);
@@ -228,7 +228,11 @@ export default function Destinos() {
           {destinosFiltrados.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
               {destinosFiltrados.map((destino) => (
-                <TarjetaDestino key={destino.id} destino={destino} />
+                <TarjetaDestino
+                  key={destino.id}
+                  destino={destino}
+                  modoDebug={modoDebug}
+                />
               ))}
             </div>
           ) : (

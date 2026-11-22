@@ -72,8 +72,9 @@ viajes-carolina-delgado-pfy2202/
 │   │   ├── Inicio.jsx             # Portada de bienvenida
 │   │   └── PaginaNoEncontrada.jsx # Vista 404 para rutas no registradas
 │   ├── App.jsx                    # Layout general y definición de rutas con react-router
-│   ├── index.css                  # Directivas y estilos base de Tailwind CSS
-│   └── main.jsx                   # Punto de entrada, arranque de MSW, ApolloProvider y BrowserRouter
+│   ├── index.css                  # Hoja de estilos global e importación de utilidades
+│   ├── main.jsx                   # Punto de entrada, arranque de MSW, ApolloProvider y BrowserRouter
+│   └── tailwind.css               # Reglas y utilidades compiladas de Tailwind CSS
 ├── .env.example                   # Variables de entorno de ejemplo (VITE_MSW_ENABLED)
 ├── index.html                     # Documento HTML raíz de Vite
 ├── package.json                   # Dependencias y scripts de desarrollo, build y deploy
