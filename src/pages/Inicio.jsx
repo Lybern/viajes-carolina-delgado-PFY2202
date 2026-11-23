@@ -2,6 +2,42 @@ import React from 'react';
 import { Link, useSearchParams } from 'react-router';
 
 // ---------------------------------------------------------------------------
+// Tarjetas informativas de la portada con fotografía e identificador visual.
+// ---------------------------------------------------------------------------
+const serviciosDestacados = [
+  {
+    numero: '01',
+    etiqueta: 'Catálogo Mundial',
+    titulo: 'Destinos y Experiencias',
+    descripcion:
+      'Conoce ciudades emblemáticas de Europa, Asia y América, su mejor temporada climática y las actividades imperdibles en cada país.',
+    imagen:
+      'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=800&q=80',
+    alt: 'Paisaje escénico de viaje entre montañas y lago',
+  },
+  {
+    numero: '02',
+    etiqueta: 'Conectividad Aérea',
+    titulo: 'Vuelos e Itinerarios',
+    descripcion:
+      'Compara aerolíneas internacionales, rutas desde Santiago, horarios de salida, fechas programadas y cupos de asientos disponibles.',
+    imagen:
+      'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?auto=format&fit=crop&w=800&q=80',
+    alt: 'Vista desde el ala de un avión comercial sobre las nubes',
+  },
+  {
+    numero: '03',
+    etiqueta: 'Estadías Confortables',
+    titulo: 'Alojamientos Exclusivos',
+    descripcion:
+      'Revisa opciones de hospedaje categorizadas por estrellas, ubicación estratégica, servicios incluidos y disponibilidad de habitaciones.',
+    imagen:
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80',
+    alt: 'Hotel resort de lujo con piscina iluminada al atardecer',
+  },
+];
+
+// ---------------------------------------------------------------------------
 // Página: Portada institucional y bienvenida para el usuario final.
 // No realiza descargas anticipadas del catálogo; presenta los servicios
 // de la agencia de viajes y guía al usuario hacia el catálogo de destinos.
@@ -13,8 +49,15 @@ export default function Inicio() {
 
   return (
     <section className="flex flex-col gap-6">
-      {/* Hero Banner con gradiente profundo y llamada a la acción */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 text-white p-8 sm:p-10 rounded-2xl shadow-lg border border-blue-800/40">
+      {/* Hero Banner con imagen panorámica de fondo, gradiente profundo y llamada a la acción */}
+      <div className="relative overflow-hidden bg-slate-900 text-white p-8 sm:p-10 rounded-2xl shadow-lg border border-blue-800/40">
+        <img
+          src="https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1400&q=80"
+          alt="Ruta panorámica de viajes internacionales"
+          className="absolute inset-0 w-full h-full object-cover opacity-25"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-blue-950 to-indigo-900 opacity-85" />
+
         <div className="relative z-10 max-w-2xl">
           <span className="inline-block bg-blue-500/20 border border-blue-400/30 text-blue-200 text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4">
             Planificador de Viajes Internacionales
@@ -67,46 +110,48 @@ export default function Inicio() {
         </div>
       </div>
 
-      {/* Grid de beneficios/pasos de planificación en 3 cortes (1 col móvil, 2 cols tablet, 3 cols desktop) */}
+      {/* Grid de tarjetas con imágenes en 3 cortes (1 col móvil, 2 cols tablet, 3 cols desktop) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 font-black text-sm flex items-center justify-center mb-4">
-            01
-          </div>
-          <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">
-            Destinos y Experiencias
-          </h3>
-          <p className="text-sm text-slate-600 leading-relaxed m-0">
-            Conoce ciudades emblemáticas de Europa, Asia y América, su mejor
-            temporada climática y las actividades imperdibles en cada país.
-          </p>
-        </div>
+        {serviciosDestacados.map((servicio, index) => (
+          <article
+            key={servicio.numero}
+            className={`group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col ${
+              index === 2 ? 'md:col-span-2 lg:col-span-1' : ''
+            }`}
+          >
+            {/* Cabecera fotográfica de la tarjeta */}
+            <div className="relative h-44 bg-slate-900 overflow-hidden">
+              <img
+                src={servicio.imagen}
+                alt={servicio.alt}
+                className="w-full h-full object-cover opacity-85 group-hover:scale-105 transition-transform duration-300"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/20 to-transparent" />
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200">
-          <div className="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-700 font-black text-sm flex items-center justify-center mb-4">
-            02
-          </div>
-          <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">
-            Vuelos e Itinerarios
-          </h3>
-          <p className="text-sm text-slate-600 leading-relaxed m-0">
-            Compara aerolíneas internacionales, rutas desde Santiago, horarios de
-            salida, fechas programadas y cupos de asientos disponibles.
-          </p>
-        </div>
+              <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+                <span className="bg-white/95 backdrop-blur-sm text-slate-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
+                  {servicio.etiqueta}
+                </span>
+                <span className="bg-blue-600/95 text-white text-xs font-black px-2.5 py-1 rounded-full shadow-sm">
+                  {servicio.numero}
+                </span>
+              </div>
+            </div>
 
-        <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-all duration-200 md:col-span-2 lg:col-span-1">
-          <div className="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-700 font-black text-sm flex items-center justify-center mb-4">
-            03
-          </div>
-          <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">
-            Alojamientos Exclusivos
-          </h3>
-          <p className="text-sm text-slate-600 leading-relaxed m-0">
-            Revisa opciones de hospedaje categorizadas por estrellas, ubicación
-            estratégica, servicios incluidos y disponibilidad de habitaciones.
-          </p>
-        </div>
+            {/* Contenido descriptivo */}
+            <div className="p-6 flex-1 flex flex-col justify-between">
+              <div>
+                <h3 className="text-lg font-bold text-slate-800 m-0 mb-2">
+                  {servicio.titulo}
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed m-0">
+                  {servicio.descripcion}
+                </p>
+              </div>
+            </div>
+          </article>
+        ))}
       </div>
     </section>
   );
