@@ -24,6 +24,7 @@ export default function DetalleDestino() {
 
   const { data, loading, error, refetch } = useQuery(OBTENER_DETALLE_DESTINO, {
     variables: { id, simularError },
+    notifyOnNetworkStatusChange: true,
   });
 
   const destino = data?.destino;
@@ -76,6 +77,16 @@ export default function DetalleDestino() {
           >
             Volver a destinos
           </Link>
+
+          {!simularError && (
+            <Boton
+              variant="secondary"
+              onClick={() => refetch()}
+              disabled={loading}
+            >
+              Actualizar disponibilidad
+            </Boton>
+          )}
 
           {/* Controles de simulación visibles en desarrollo o al activar ?debug=true en la URL */}
           {mostrarControlesPrueba && (

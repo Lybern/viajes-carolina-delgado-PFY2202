@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, NavLink, Link } from 'react-router';
+import { Routes, Route, NavLink, Link, useSearchParams } from 'react-router';
 import Inicio from './pages/Inicio';
 import Destinos from './pages/Destinos';
 import DetalleDestino from './pages/DetalleDestino';
@@ -11,12 +11,17 @@ import PaginaNoEncontrada from './pages/PaginaNoEncontrada';
 // innecesarias al abrir la portada de Inicio.
 // ---------------------------------------------------------------------------
 export default function App() {
+  const [searchParams] = useSearchParams();
+  const modoDebug = searchParams.get('debug') === 'true';
+  const rutaInicio = modoDebug ? '/?debug=true' : '/';
+  const rutaDestinos = modoDebug ? '/destinos?debug=true' : '/destinos';
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-100 text-slate-800 antialiased">
       {/* Cabecera institucional con gradiente y adaptabilidad móvil/desktop */}
       <header className="bg-gradient-to-r from-slate-900 via-blue-950 to-blue-800 text-white shadow-md border-b border-blue-900/40">
         <div className="max-w-6xl mx-auto px-4 py-5 flex items-center justify-between flex-wrap gap-4">
-          <Link to="/" className="flex items-center gap-3.5 no-underline text-white group">
+          <Link to={rutaInicio} className="flex items-center gap-3.5 no-underline text-white group">
             <div className="w-11 h-11 bg-white/10 group-hover:bg-white/20 rounded-xl border border-white/20 shadow-sm flex items-center justify-center transition-all duration-200">
               <svg
                 width="24"
@@ -67,7 +72,7 @@ export default function App() {
           <ul className="list-none p-0 m-0 flex flex-row md:flex-col gap-2">
             <li className="flex-1 md:flex-initial">
               <NavLink
-                to="/"
+                to={rutaInicio}
                 end
                 className={({ isActive }) =>
                   `flex items-center justify-center md:justify-start gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 no-underline ${
@@ -82,7 +87,7 @@ export default function App() {
             </li>
             <li className="flex-1 md:flex-initial">
               <NavLink
-                to="/destinos"
+                to={rutaDestinos}
                 className={({ isActive }) =>
                   `flex items-center justify-center md:justify-start gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 no-underline ${
                     isActive

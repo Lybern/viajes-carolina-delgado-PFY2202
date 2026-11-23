@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link, useSearchParams } from 'react-router';
 
 // ---------------------------------------------------------------------------
 // Página: Portada institucional y bienvenida para el usuario final.
@@ -7,6 +7,10 @@ import { Link } from 'react-router';
 // de la agencia de viajes y guía al usuario hacia el catálogo de destinos.
 // ---------------------------------------------------------------------------
 export default function Inicio() {
+  const [searchParams] = useSearchParams();
+  const modoDebug = searchParams.get('debug') === 'true';
+  const rutaDestinos = modoDebug ? '/destinos?debug=true' : '/destinos';
+
   return (
     <section className="flex flex-col gap-6">
       {/* Hero Banner con gradiente profundo y llamada a la acción */}
@@ -26,7 +30,7 @@ export default function Inicio() {
 
           <div className="flex flex-wrap items-center gap-4">
             <Link
-              to="/destinos"
+              to={rutaDestinos}
               className="inline-flex items-center justify-center font-bold rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 px-6 py-3 text-sm sm:text-base shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 no-underline"
             >
               Explorar Catálogo de Destinos

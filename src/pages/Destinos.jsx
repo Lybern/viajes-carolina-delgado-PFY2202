@@ -205,15 +205,15 @@ export default function Destinos() {
         />
       )}
 
-      {/* Aviso de resiliencia cuando ocurrió un error pero se conservan los datos previos en memoria */}
-      {!cargando && error && destinos.length > 0 && (
+      {/* Aviso de resiliencia cuando ocurrió un error del servidor (500) pero se conservan los datos previos en memoria */}
+      {!cargando && error && codigoError !== 404 && destinos.length > 0 && (
         <div className="px-4 py-3 bg-amber-50 border-l-4 border-amber-500 rounded-lg text-amber-900 text-xs font-medium">
           Mostrando en pantalla el último catálogo cargado en memoria mientras se restablece la conexión.
         </div>
       )}
 
-      {/* Buscador y listado de tarjetas de destinos */}
-      {!cargando && destinos.length > 0 && (
+      {/* Buscador y listado de tarjetas de destinos (se ocultan si se simuló un 404 de recurso no encontrado) */}
+      {!cargando && codigoError !== 404 && destinos.length > 0 && (
         <>
           <BarraBusqueda
             busqueda={busqueda}
