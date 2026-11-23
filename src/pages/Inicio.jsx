@@ -6,7 +6,6 @@ import { Link, useSearchParams } from 'react-router';
 // ---------------------------------------------------------------------------
 const serviciosDestacados = [
   {
-    numero: '01',
     etiqueta: 'Catálogo Mundial',
     titulo: 'Destinos y Experiencias',
     descripcion:
@@ -16,7 +15,6 @@ const serviciosDestacados = [
     alt: 'Paisaje escénico de viaje entre montañas y lago',
   },
   {
-    numero: '02',
     etiqueta: 'Conectividad Aérea',
     titulo: 'Vuelos e Itinerarios',
     descripcion:
@@ -26,7 +24,6 @@ const serviciosDestacados = [
     alt: 'Vista desde el ala de un avión comercial sobre las nubes',
   },
   {
-    numero: '03',
     etiqueta: 'Estadías Confortables',
     titulo: 'Alojamientos Exclusivos',
     descripcion:
@@ -114,7 +111,7 @@ export default function Inicio() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {serviciosDestacados.map((servicio, index) => (
           <article
-            key={servicio.numero}
+            key={servicio.etiqueta}
             className={`group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col ${
               index === 2 ? 'md:col-span-2 lg:col-span-1' : ''
             }`}
@@ -129,12 +126,9 @@ export default function Inicio() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/20 to-transparent" />
 
-              <div className="absolute top-3 left-3 right-3 flex items-center justify-between gap-2">
+              <div className="absolute top-3 left-3">
                 <span className="bg-white/95 backdrop-blur-sm text-slate-900 text-xs font-bold px-2.5 py-1 rounded-full shadow-sm">
                   {servicio.etiqueta}
-                </span>
-                <span className="bg-blue-600/95 text-white text-xs font-black px-2.5 py-1 rounded-full shadow-sm">
-                  {servicio.numero}
                 </span>
               </div>
             </div>
